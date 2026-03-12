@@ -156,6 +156,20 @@
 
         document.getElementById('detailDesc').textContent = movie.description;
         document.getElementById('detailPrice').textContent = movie.price + ' ETH';
+
+        // --- Coming Soon: hide showtime & booking ---
+        // If this movie isn't released yet, hide the showtime selector
+        // and replace the CTA with a "Notify Me" message.
+        if (movie.section === 'comingSoon') {
+            document.querySelector('.showtime-section').style.display = 'none';
+            var ctaDiv = document.querySelector('.detail-cta');
+            ctaDiv.innerHTML =
+                '<button class="btn btn-primary btn-lg" disabled style="opacity:0.6;cursor:not-allowed;">' +
+                'Coming Soon — Not Yet Available' +
+                '</button>';
+            return; // Skip all the showtime/date logic below
+        }
+
         // CTA button — build href dynamically on click so it includes
         // the latest selected date and time
         var selectSeatsBtn = document.getElementById('selectSeatsBtn2');
