@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed - Tixxer</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+    <!--
+        TICKET CONFIRMATION PAGE (confirmation.html)
+        =============================================
+        Shown after a successful blockchain payment.
+
+        Reads the transaction hash and booking data from sessionStorage
+        (saved by checkout.js after payment succeeds).
+
+        Layout:
+        1. Navbar (no wallet button needed here)
+        2. Progress steps (all completed, step 4 active)
+        3. Success header (green checkmark + message)
+        4. Ticket card (movie info + booking details + tx hash)
+        5. Back to Home button
+        6. Footer
+    -->
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="../index.html" class="brand-link">
+                <img src="../assets/images/logo.svg" alt="Tixxer" class="logo-img">
+            </a>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="container detail-page">
+
+        <!-- Progress Steps: all completed -->
+        <div class="progress-steps">
+            <div class="step completed">
+                <span class="step-number">1</span>
+                <span class="step-label">Movie</span>
+            </div>
+            <div class="step-line completed"></div>
+            <div class="step completed">
+                <span class="step-number">2</span>
+                <span class="step-label">Seats</span>
+            </div>
+            <div class="step-line completed"></div>
+            <div class="step completed">
+                <span class="step-number">3</span>
+                <span class="step-label">Checkout</span>
+            </div>
+            <div class="step-line completed"></div>
+            <div class="step active">
+                <span class="step-number">4</span>
+                <span class="step-label">Confirm</span>
+            </div>
+        </div>
+
+        <!-- ====== SUCCESS HEADER ====== -->
+        <div class="confirm-header">
+            <div class="confirm-icon">&#10003;</div>
+            <h1 class="confirm-title">Booking Confirmed!</h1>
+            <p class="confirm-subtitle">Your ticket has been booked and payment is verified on the blockchain.</p>
+        </div>
+
+        <!-- ====== TICKET CARD ====== -->
+        <div class="ticket-card" id="ticketCard">
+
+            <!-- Top: Movie info -->
+            <div class="ticket-top">
+                <img
+                    src="https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg"
+                    alt="Interstellar poster"
+                    class="ticket-poster"
+                >
+                <div class="ticket-movie-info">
+                    <h2 class="ticket-movie-title">Interstellar</h2>
+                    <p class="ticket-movie-sub">Sci-Fi &middot; Adventure</p>
+                    <p class="ticket-movie-sub">Mon, 10 Mar 2026 &middot; 1:45 PM</p>
+                    <p class="ticket-movie-sub">Seats: A1, A2, B5</p>
+                </div>
+            </div>
+
+            <!-- Tear line -->
+            <div class="ticket-tear"></div>
+
+            <!-- Bottom: Booking details -->
+            <div class="ticket-bottom">
+                <div class="ticket-row">
+                    <span class="ticket-label">Booking ID</span>
+                    <span class="ticket-value" id="bookingId">TXR-20260310-A7B2</span>
+                </div>
+                <div class="ticket-row">
+                    <span class="ticket-label">Amount Paid</span>
+                    <span class="ticket-value amount" id="amountPaid">0.015 ETH</span>
+                </div>
+                <div class="ticket-row">
+                    <span class="ticket-label">Tx Hash</span>
+                    <a
+                        class="ticket-value tx-hash"
+                        id="txHashLink"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Loading...
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== BACK TO HOME ====== -->
+        <div class="confirm-cta">
+            <a href="../index.html" class="btn btn-primary btn-lg">
+                Back to Home
+            </a>
+        </div>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <p>&copy; 2026 Tixxer &middot; Built for Learning</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../js/confirmation.js"></script>
+
+</body>
+</html>

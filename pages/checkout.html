@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Tixxer</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="detail-body" id="checkoutBody">
+
+    <!--
+        CHECKOUT PAGE (checkout.html)
+        ==============================
+        Displays the full order summary and a "Pay with MetaMask" button.
+        All booking data is read from URL parameters.
+    -->
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="../index.html" class="brand-link">
+                <img src="../assets/images/logo.svg" alt="Tixxer" class="logo-img">
+            </a>
+        </div>
+        <div class="navbar-center">
+            <a href="../index.html" class="nav-brand-text" style="text-decoration:none;">Tixxer</a>
+        </div>
+        <div class="navbar-right">
+            <span class="nav-network-badge">Powered by Sepolia Testnet</span>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="container detail-page">
+
+        <!-- Back Navigation -->
+        <a href="#" class="back-link" id="backLink">
+            &larr; Back to Seats
+        </a>
+
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <div class="step completed">
+                <span class="step-number">1</span>
+                <span class="step-label">Movie</span>
+            </div>
+            <div class="step-line completed"></div>
+            <div class="step completed">
+                <span class="step-number">2</span>
+                <span class="step-label">Seats</span>
+            </div>
+            <div class="step-line completed"></div>
+            <div class="step active">
+                <span class="step-number">3</span>
+                <span class="step-label">Checkout</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+                <span class="step-number">4</span>
+                <span class="step-label">Confirm</span>
+            </div>
+        </div>
+
+        <!-- ====== CHECKOUT LAYOUT: Two columns ====== -->
+        <div class="checkout-grid">
+
+            <!-- LEFT COLUMN: Order Summary -->
+            <div class="order-card">
+                <h2 class="order-card-title">Order Summary</h2>
+
+                <!-- Movie info row -->
+                <div class="order-movie-info">
+                    <img src="" alt="" class="order-poster" id="orderPoster">
+                    <div class="order-movie-text">
+                        <h3 class="order-movie-title" id="orderTitle">Loading...</h3>
+                        <p class="order-movie-genre" id="orderGenre"></p>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="order-divider"></div>
+
+                <!-- Booking details list -->
+                <div class="order-details">
+                    <div class="order-row">
+                        <span class="order-label">Date</span>
+                        <span class="order-value" id="orderDate"></span>
+                    </div>
+                    <div class="order-row">
+                        <span class="order-label">Time</span>
+                        <span class="order-value" id="orderTime"></span>
+                    </div>
+                    <div class="order-row">
+                        <span class="order-label">Seats</span>
+                        <span class="order-value" id="orderSeats"></span>
+                    </div>
+                    <div class="order-row">
+                        <span class="order-label">Quantity</span>
+                        <span class="order-value" id="orderQty"></span>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="order-divider"></div>
+
+                <!-- Price breakdown -->
+                <div class="order-details">
+                    <div class="order-row">
+                        <span class="order-label">Price per seat</span>
+                        <span class="order-value" id="orderPricePer"></span>
+                    </div>
+                    <div class="order-row order-total-row">
+                        <span class="order-total-label">Total</span>
+                        <span class="order-total-value" id="orderTotal"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Wallet + Pay -->
+            <div class="checkout-actions">
+
+                <!-- Wallet Status Card -->
+                <div class="wallet-card">
+                    <h3 class="wallet-card-title">Wallet</h3>
+
+                    <!-- State: Not Connected -->
+                    <div class="wallet-state" id="walletNotConnected">
+                        <div class="wallet-icon-circle">
+                            <span class="wallet-icon">&#128279;</span>
+                        </div>
+                        <p class="wallet-message">Connect your MetaMask wallet to proceed with payment.</p>
+                        <button class="btn btn-primary btn-lg" id="connectWalletBtn">
+                            Connect MetaMask
+                        </button>
+                    </div>
+
+                    <!-- State: Connecting -->
+                    <div class="wallet-state" id="walletConnecting" style="display: none;">
+                        <div class="wallet-icon-circle wallet-icon-connecting">
+                            <span class="spinner spinner-lg"></span>
+                        </div>
+                        <p class="wallet-message">
+                            <strong>Connecting to MetaMask...</strong><br>
+                            Please approve the connection in your wallet popup.
+                        </p>
+                        <p class="wallet-hint">If the popup doesn't appear, click the MetaMask extension icon.</p>
+                    </div>
+
+                    <!-- State: Connected -->
+                    <div class="wallet-state wallet-connected" id="walletConnected" style="display: none;">
+                        <div class="wallet-info-row">
+                            <span class="wallet-info-label">Status</span>
+                            <span class="wallet-status-badge connected">
+                                <span class="status-dot"></span>
+                                Connected
+                            </span>
+                        </div>
+                        <div class="wallet-info-row">
+                            <span class="wallet-info-label">Address</span>
+                            <span class="wallet-info-value">0x1a2B...9fE3</span>
+                        </div>
+                        <div class="wallet-info-row">
+                            <span class="wallet-info-label">Network</span>
+                            <span class="wallet-info-value">Sepolia Testnet</span>
+                        </div>
+                        <div class="wallet-info-row">
+                            <span class="wallet-info-label">Balance</span>
+                            <span class="wallet-info-value">0.500 ETH</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pay Button -->
+                <button class="btn btn-pay" id="payBtn" disabled>
+                    <span class="pay-btn-icon">&#9830;</span>
+                    Pay <span id="payBtnAmount">0.000</span> ETH
+                </button>
+
+                <!-- Transaction Progress -->
+                <div class="tx-progress" id="txProgress">
+                    <p class="tx-progress-title">Transaction in Progress</p>
+                    <div class="tx-steps">
+                        <div class="tx-step pending" id="txStep1">
+                            <span class="tx-step-icon">1</span>
+                            <div>
+                                <div class="tx-step-label">Approve in MetaMask</div>
+                                <div class="tx-step-sub">Confirm the transaction in your wallet</div>
+                            </div>
+                        </div>
+                        <div class="tx-step pending" id="txStep2">
+                            <span class="tx-step-icon">2</span>
+                            <div>
+                                <div class="tx-step-label">Broadcasting to Network</div>
+                                <div class="tx-step-sub">Sending to the Sepolia blockchain</div>
+                            </div>
+                        </div>
+                        <div class="tx-step pending" id="txStep3">
+                            <span class="tx-step-icon">3</span>
+                            <div>
+                                <div class="tx-step-label">Waiting for Confirmation</div>
+                                <div class="tx-step-sub">Mining usually takes 12–15 seconds</div>
+                                <div class="tx-mining-bar" id="txMiningBar" style="display: none;">
+                                    <div class="tx-mining-bar-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testnet Disclaimer -->
+                <p class="disclaimer">
+                    <span class="disclaimer-icon">&#9432;</span>
+                    This uses test ETH on Sepolia. No real money is involved.
+                </p>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <p>&copy; 2026 Tixxer &middot; Built for Learning</p>
+    </footer>
+
+    <!-- Movie data -->
+    <script src="../js/movies.js"></script>
+
+    <!-- Populate checkout from URL params -->
+    <script>
+    (function () {
+        var params = new URLSearchParams(window.location.search);
+        var id = parseInt(params.get('id')) || 1;
+        var dateStr = params.get('date') || '';
+        var timeStr = params.get('time') || '';
+        var seatsStr = params.get('seats') || '';
+        var totalStr = params.get('total') || '0.000';
+
+        var movie = getMovie(id);
+
+        // Back link — go back to seats with same movie/date/time/seats
+        // Including seats in the URL preserves the user's seat selection
+        document.getElementById('backLink').href =
+            'seats.html?id=' + id +
+            '&date=' + encodeURIComponent(dateStr) +
+            '&time=' + encodeURIComponent(timeStr) +
+            '&seats=' + encodeURIComponent(seatsStr);
+
+        // Backdrop background
+        if (movie) {
+            var bgUrl = movie.backdrop || movie.poster;
+            document.getElementById('checkoutBody').style.backgroundImage = 'url(' + bgUrl + ')';
+            document.title = 'Checkout - ' + movie.title + ' - Tixxer';
+        }
+
+        // Movie info
+        var posterEl = document.getElementById('orderPoster');
+        posterEl.src = movie ? movie.poster : '';
+        posterEl.alt = movie ? movie.title + ' poster' : '';
+        document.getElementById('orderTitle').textContent = movie ? movie.title : 'Unknown';
+        document.getElementById('orderGenre').textContent = movie ? movie.genre : '';
+
+        // Format date: "2026-03-14" → "Sat, 14 Mar 2026"
+        if (dateStr) {
+            var d = new Date(dateStr + 'T00:00:00');
+            var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            var months = ['Jan','Feb','Mar','Apr','May','Jun',
+                          'Jul','Aug','Sep','Oct','Nov','Dec'];
+            document.getElementById('orderDate').textContent =
+                days[d.getDay()] + ', ' + d.getDate() + ' ' +
+                months[d.getMonth()] + ' ' + d.getFullYear();
+        }
+
+        // Time
+        document.getElementById('orderTime').textContent = timeStr;
+
+        // Seats
+        var seatsArray = seatsStr ? seatsStr.split(',') : [];
+        document.getElementById('orderSeats').textContent = seatsStr || 'None';
+        document.getElementById('orderQty').textContent =
+            seatsArray.length + (seatsArray.length === 1 ? ' ticket' : ' tickets');
+
+        // Price
+        var price = movie ? movie.price : '0.005';
+        document.getElementById('orderPricePer').textContent = price + ' ETH';
+        document.getElementById('orderTotal').textContent = totalStr + ' ETH';
+        document.getElementById('payBtnAmount').textContent = totalStr;
+
+        // Make total available to checkout.js
+        window.CHECKOUT_TOTAL = totalStr;
+    })();
+    </script>
+
+    <!-- Payment scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script src="../js/wallet.js"></script>
+    <script src="../js/checkout.js"></script>
+
+</body>
+</html>

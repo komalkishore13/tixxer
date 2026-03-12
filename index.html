@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tixxer - Book Movie Tickets with Crypto</title>
+
+    <!-- Google Fonts - Inter for clean modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <img src="assets/images/logo.svg" alt="Tixxer" class="logo-img">
+        </div>
+        <div class="navbar-center">
+            <span class="nav-brand-text">Tixxer</span>
+        </div>
+        <div class="navbar-right">
+            <span class="nav-network-badge">Powered by Sepolia Testnet</span>
+        </div>
+    </nav>
+
+    <!-- ========== SITE DESCRIPTION BAR ========== -->
+    <div class="site-desc-bar">
+        <div class="marquee-track">
+            <span class="site-desc-text">&#9733; Browse movies, pick your seats, and pay with test ETH on the Sepolia network &nbsp;&mdash;&nbsp; Web3 Ticketing Platform &nbsp;&mdash;&nbsp; Powered by Ethereum &nbsp;&mdash;&nbsp; Sepolia Testnet &nbsp;&#9733;</span>
+            <span class="site-desc-text">&#9733; Browse movies, pick your seats, and pay with test ETH on the Sepolia network &nbsp;&mdash;&nbsp; Web3 Ticketing Platform &nbsp;&mdash;&nbsp; Powered by Ethereum &nbsp;&mdash;&nbsp; Sepolia Testnet &nbsp;&#9733;</span>
+        </div>
+    </div>
+
+    <!-- ========== SEARCH BAR ========== -->
+    <div class="search-bar-section">
+        <div class="search-wrapper">
+            <input type="text" class="search-input" id="movieSearch" placeholder="Search for Movies, Events, and more...">
+        </div>
+    </div>
+
+    <!-- ========== MOVIE LISTINGS ========== -->
+    <main class="container" id="movieContainer">
+
+        <!-- No results message (hidden by default) -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <p class="no-results-text">No results found</p>
+        </div>
+
+        <!-- Sections rendered dynamically by JS from movies.js -->
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <p>&copy; 2026 Tixxer &middot; Built for Learning</p>
+    </footer>
+
+    <!-- Movie data -->
+    <script src="js/movies.js"></script>
+
+    <!-- Render homepage dynamically -->
+    <script>
+    (function () {
+        var container = document.getElementById('movieContainer');
+        var noResults = document.getElementById('noResults');
+
+        // Build all sections from SECTIONS/MOVIES data
+        SECTIONS.forEach(function (sec) {
+            var movies = getMoviesBySection(sec.key);
+            if (movies.length === 0) return;
+
+            var section = document.createElement('section');
+            section.className = 'movie-listing';
+            if (sec.key === 'nowShowing') section.id = 'nowShowing';
+
+            // Section header
+            var header = document.createElement('div');
+            header.className = 'section-header';
+            header.innerHTML = '<h2 class="section-title">' + sec.title + '</h2>';
+            section.appendChild(header);
+
+            // Carousel viewport
+            var viewport = document.createElement('div');
+            viewport.className = 'carousel-viewport';
+
+            // Arrows
+            viewport.innerHTML =
+                '<button class="carousel-arrow carousel-arrow-left" data-carousel="' + sec.trackId + '" aria-label="Previous">&#8592;</button>' +
+                '<button class="carousel-arrow carousel-arrow-right" data-carousel="' + sec.trackId + '" aria-label="Next">&#8594;</button>';
+
+            // Track
+            var track = document.createElement('div');
+            track.className = 'carousel-track';
+            track.id = sec.trackId;
+
+            movies.forEach(function (m) {
+                var isComingSoon = sec.comingSoon;
+                var ratingBadge = isComingSoon
+                    ? '<span class="rating-badge coming-soon-badge">Coming Soon</span>'
+                    : '<span class="rating-badge">&#11088; ' + m.data.rating + '</span>';
+                var btnText = isComingSoon ? 'Notify Me' : 'Book Now';
+                var btnClass = isComingSoon ? 'btn btn-book btn-notify' : 'btn btn-book';
+
+                var slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+                slide.innerHTML =
+                    '<a href="pages/movie.html?id=' + m.id + '" class="movie-card-link">' +
+                        '<div class="movie-card">' +
+                            '<div class="poster-wrapper">' +
+                                '<img src="' + m.data.poster + '" alt="' + m.data.title + '" class="poster-img">' +
+                                ratingBadge +
+                            '</div>' +
+                            '<div class="card-info">' +
+                                '<h3 class="movie-title">' + m.data.title + '</h3>' +
+                                '<p class="movie-genre">' + m.data.genre + '</p>' +
+                                '<div class="card-footer">' +
+                                    '<span class="movie-price">' + m.data.price + ' ETH</span>' +
+                                    '<span class="' + btnClass + '">' + btnText + '</span>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</a>';
+                track.appendChild(slide);
+            });
+
+            viewport.appendChild(track);
+            section.appendChild(viewport);
+            container.appendChild(section);
+        });
+
+        // ---- Search filter ----
+        document.getElementById('movieSearch').addEventListener('input', function () {
+            var query = this.value.toLowerCase().trim();
+            var sections = container.querySelectorAll('.movie-listing');
+            var totalVisible = 0;
+
+            sections.forEach(function (section) {
+                var cards = section.querySelectorAll('.carousel-slide');
+                var visibleInSection = 0;
+
+                cards.forEach(function (card) {
+                    var title = card.querySelector('.movie-title');
+                    if (!title) return;
+                    if (title.textContent.toLowerCase().includes(query) || query === '') {
+                        card.style.display = '';
+                        visibleInSection++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                section.style.display = visibleInSection === 0 && query !== '' ? 'none' : '';
+                totalVisible += visibleInSection;
+            });
+
+            noResults.style.display = totalVisible === 0 && query !== '' ? '' : 'none';
+        });
+    })();
+    </script>
+
+    <!-- Carousel functionality -->
+    <script src="js/carousel.js"></script>
+
+</body>
+</html>
