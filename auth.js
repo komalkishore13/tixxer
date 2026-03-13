@@ -80,8 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ---------- REDIRECT IF ALREADY LOGGED IN ----------
-  if (typeof checkAuth === 'function') {
-    checkAuth({ redirectIfAuth: true });
+  const existingUser = getCurrentUser();
+  if (existingUser) {
+    // If came from a sub-site, send them back with auth data
+    if (redirectUrl) {
+      redirectAfterAuth(existingUser);
+    } else {
+      window.location.href = 'index.html';
+    }
+    return;
   }
 
 
