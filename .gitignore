@@ -1,0 +1,8 @@
+node_modules/
+.env
+
+# Sub-projects (separate repos)
+tixxer-bus/
+Tixxer-flight/
+Tixxer-movie/
+tixxer-railway/

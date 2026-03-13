@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tixxer — Movies</title>
+  <link rel="stylesheet" href="booking.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-booking-type="movies">
+
+  <!-- Navbar -->
+  <nav class="book-navbar">
+    <a href="index.html" class="nav-logo">TIXXER</a>
+    <ul class="book-nav-links">
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="movies.html">Movies</a></li>
+      <li><a href="bus.html">Bus</a></li>
+      <li><a href="flights.html">Flights</a></li>
+    </ul>
+    <div class="book-nav-right">
+      <span class="nav-user-name" id="navUserName"></span>
+      <button class="nav-logout-btn" onclick="logout()">Logout</button>
+    </div>
+    <button class="book-hamburger" id="bookHamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="book-mobile-menu" id="bookMobileMenu">
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="movies.html">Movies</a></li>
+      <li><a href="bus.html">Bus</a></li>
+      <li><a href="flights.html">Flights</a></li>
+      <li><a href="railways.html">Railways</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Hero -->
+  <header class="book-hero">
+    <div class="book-hero-glow"></div>
+    <div class="book-hero-content">
+      <p class="book-label">CINEMA TICKETS</p>
+      <h1 class="book-title">Movies Without The Hassle</h1>
+      <p class="book-subtitle">Pick your city, choose a theatre, and grab the best seats.</p>
+    </div>
+  </header>
+
+  <!-- Search -->
+  <section class="search-section">
+    <div class="search-card">
+      <form id="searchForm">
+        <div class="search-grid">
+          <div class="search-field">
+            <label for="city">City</label>
+            <select id="city" required>
+              <option value="">Select City</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label for="theatre">Theatre</label>
+            <select id="theatre" required>
+              <option value="">Select Theatre</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label for="date">Date</label>
+            <input type="date" id="date" required>
+          </div>
+        </div>
+        <button type="submit" class="search-btn">
+          Search Shows
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="results-section" id="resultsSection">
+    <div class="results-header">
+      <span class="section-num">01</span>
+      <h2>Available Shows</h2>
+      <span class="results-count" id="resultsCount"></span>
+    </div>
+    <div class="results-grid" id="resultsGrid"></div>
+  </section>
+
+  <footer class="book-footer">
+    <p>&copy; 2026 Tixxer. All rights reserved.</p>
+  </footer>
+
+  <script src="session.js"></script>
+  <script src="booking.js"></script>
+</body>
+</html>

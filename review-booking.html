@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tixxer — Review Booking</title>
+  <link rel="stylesheet" href="booking.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Ethers.js v6 for MetaMask wallet integration -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+  <style>
+    /* ---------- REVIEW PAGE STYLES ---------- */
+    .review-wrapper {
+      padding: 0 48px 80px;
+      max-width: 780px;
+    }
+
+    .review-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: bookFadeIn 0.6s 0.2s forwards;
+    }
+
+    /* Type badge at top */
+    .review-type-banner {
+      padding: 16px 36px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(124, 91, 245, 0.08);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .review-type-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(124, 91, 245, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-light);
+    }
+
+    .review-type-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .review-type-name {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 500;
+    }
+
+    /* Detail rows */
+    .review-body {
+      padding: 32px 36px;
+    }
+
+    .review-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .review-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .review-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .review-value {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--text-white);
+      text-align: right;
+    }
+
+    /* Route display (From → To) */
+    .review-route {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .review-route-point {
+      text-align: center;
+    }
+
+    .review-route-city {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .review-route-sub {
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .review-route-arrow {
+      color: var(--accent-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .review-route-arrow span {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    /* Price footer */
+    .review-price-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 36px;
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid var(--border);
+    }
+
+    .review-price-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-grey);
+    }
+
+    .review-price-amount {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--accent-light);
+    }
+
+
+    /* ---------- WALLET CONNECT STYLES ---------- */
+    .wallet-section {
+      margin-top: 24px;
+      padding: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: bookFadeIn 0.6s 0.4s forwards;
+    }
+
+    .wallet-section-title {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .wallet-connect-btn {
+      width: 100%;
+      padding: 16px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      color: var(--text-white);
+      background: rgba(245, 133, 37, 0.12);
+      border: 1px solid rgba(245, 133, 37, 0.3);
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+
+    .wallet-connect-btn:hover {
+      background: rgba(245, 133, 37, 0.2);
+      border-color: rgba(245, 133, 37, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .wallet-connect-btn .metamask-icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Connected wallet state */
+    .wallet-connected {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(52, 211, 153, 0.08);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      border-radius: 10px;
+    }
+
+    .wallet-connected-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      flex-shrink: 0;
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .wallet-connected-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .wallet-connected-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(52, 211, 153, 0.7);
+      margin-bottom: 2px;
+    }
+
+    .wallet-connected-address {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--text-white);
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .wallet-network-badge {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(124, 91, 245, 0.15);
+      color: var(--accent-light);
+      flex-shrink: 0;
+    }
+
+    .wallet-error {
+      margin-top: 10px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: #f87171;
+      background: rgba(248, 113, 113, 0.08);
+      border: 1px solid rgba(248, 113, 113, 0.15);
+      border-radius: 8px;
+      display: none;
+    }
+
+    .wallet-error.visible {
+      display: block;
+    }
+
+
+    /* ---------- ACTION BUTTONS ---------- */
+    .review-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .review-back {
+      padding: 16px 32px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-grey);
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .review-back:hover {
+      color: var(--text-white);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .review-confirm {
+      flex: 1;
+      padding: 16px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-white);
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .review-confirm:hover {
+      background: transparent;
+      box-shadow: 0 0 30px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+
+    .review-confirm.loading {
+      pointer-events: none;
+      color: transparent;
+    }
+
+    .review-confirm.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 20px; height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: var(--text-white);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+
+    /* ---------- CONFIRMATION PAGE ---------- */
+    .confirmation-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: var(--bg-main, #0a0e1a);
+      overflow-y: auto;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .confirmation-overlay.visible {
+      display: block;
+      opacity: 1;
+    }
+
+    .confirmation-content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 60px 32px 80px;
+      text-align: center;
+    }
+
+    /* Animated checkmark */
+    .confirm-check-ring {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(52, 211, 153, 0.1);
+      border: 2px solid rgba(52, 211, 153, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      animation: popIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .confirm-check-ring svg {
+      color: var(--success);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .confirm-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text-white);
+      margin-bottom: 8px;
+    }
+
+    .confirm-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+    }
+
+    /* Transaction details card */
+    .confirm-tx-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+
+    .confirm-tx-title {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .confirm-tx-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 16px;
+    }
+
+    .confirm-tx-row:last-child {
+      border-bottom: none;
+    }
+
+    .confirm-tx-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .confirm-tx-value {
+      font-size: 0.85rem;
+      color: var(--text-white);
+      text-align: right;
+      word-break: break-all;
+      font-family: 'Courier New', monospace;
+    }
+
+    .confirm-tx-value a {
+      color: var(--accent-light);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .confirm-tx-value a:hover {
+      color: var(--text-white);
+      text-decoration: underline;
+    }
+
+    /* Ticket details card */
+    .confirm-ticket-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      text-align: left;
+      margin-bottom: 32px;
+    }
+
+    .confirm-ticket-title {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .confirm-ticket-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .confirm-ticket-row:last-child {
+      border-bottom: none;
+    }
+
+    .confirm-ticket-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .confirm-ticket-value {
+      font-size: 0.9rem;
+      color: var(--text-white);
+    }
+
+    .confirm-ticket-price {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--accent-light);
+    }
+
+    .confirm-dashboard-btn {
+      display: inline-block;
+      padding: 16px 48px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-white);
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.4s;
+      text-decoration: none;
+    }
+
+    .confirm-dashboard-btn:hover {
+      background: transparent;
+      box-shadow: 0 0 30px var(--accent-glow);
+      transform: translateY(-2px);
+    }
+
+
+    /* ---------- EMPTY STATE ---------- */
+    .review-empty {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-muted);
+    }
+
+    .review-empty h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: var(--text-grey);
+      margin-bottom: 12px;
+    }
+
+    .review-empty a {
+      display: inline-block;
+      margin-top: 20px;
+      color: var(--accent-light);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .review-empty a:hover { color: var(--text-white); }
+
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 768px) {
+      .review-wrapper { padding: 0 24px 60px; }
+      .review-body { padding: 24px; }
+      .review-type-banner { padding: 14px 24px; }
+      .review-price-bar { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
+      .review-price-amount { font-size: 1.8rem; }
+      .review-actions { flex-direction: column-reverse; }
+      .review-route { gap: 16px; }
+      .review-route-city { font-size: 1rem; }
+      .wallet-section { padding: 18px; }
+      .confirmation-content { padding: 40px 20px 60px; }
+      .confirm-title { font-size: 1.6rem; }
+      .confirm-tx-card, .confirm-ticket-card { padding: 20px; }
+      .confirm-tx-row { flex-direction: column; gap: 4px; }
+      .confirm-tx-value { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Confirmation overlay (shown after successful payment) -->
+  <div class="confirmation-overlay" id="confirmationOverlay">
+    <div class="confirmation-content" id="confirmationContent"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="book-navbar">
+    <a href="index.html" class="nav-logo">TIXXER</a>
+    <ul class="book-nav-links">
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="movies.html">Movies</a></li>
+      <li><a href="bus.html">Bus</a></li>
+      <li><a href="flights.html">Flights</a></li>
+    </ul>
+    <div class="book-nav-right">
+      <span class="nav-user-name" id="navUserName"></span>
+      <button class="nav-logout-btn" onclick="logout()">Logout</button>
+    </div>
+    <button class="book-hamburger" id="bookHamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="book-mobile-menu" id="bookMobileMenu">
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="movies.html">Movies</a></li>
+      <li><a href="bus.html">Bus</a></li>
+      <li><a href="flights.html">Flights</a></li>
+      <li><a href="railways.html">Railways</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Hero -->
+  <header class="book-hero">
+    <div class="book-hero-glow"></div>
+    <div class="book-hero-content">
+      <p class="book-label">REVIEW &amp; CONFIRM</p>
+      <h1 class="book-title">Review Your Booking</h1>
+      <p class="book-subtitle">Check the details below before confirming your ticket.</p>
+    </div>
+  </header>
+
+  <!-- Review content -->
+  <section class="review-wrapper" id="reviewWrapper"></section>
+
+  <footer class="book-footer">
+    <p>&copy; 2026 Tixxer. All rights reserved.</p>
+  </footer>
+
+  <script src="session.js"></script>
+  <script src="api.js"></script>
+  <script>
+    /* ================================================
+       TIXXER — Review Booking + MetaMask Payment
+       Ethers.js v6 · Sepolia Testnet
+       ================================================ */
+
+    // Hardcoded receiver address (test wallet)
+    const RECEIVER_ADDRESS = '0x742d35Cc6634C0532925a3b844Bc9e7595f2bD10';
+    // Sepolia chain ID
+    const SEPOLIA_CHAIN_ID = '0xaa36a7';
+    // Payment amount in ETH
+    const PAYMENT_ETH = '0.0001';
+
+    // Wallet state
+    let connectedAddress = null;
+    let signer = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // ---------- AUTH GUARD ----------
+      const user = checkAuth({ requireAuth: true });
+      if (!user) return;
+
+      // Navbar user name
+      const navName = document.getElementById('navUserName');
+      if (navName) navName.textContent = user.name;
+
+      // Mobile menu
+      const hamburger = document.getElementById('bookHamburger');
+      const mobileMenu = document.getElementById('bookMobileMenu');
+      if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', () => {
+          hamburger.classList.toggle('active');
+          mobileMenu.classList.toggle('open');
+          document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+        });
+        mobileMenu.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = '';
+          });
+        });
+      }
+
+
+      // ---------- LOAD SELECTED TICKET ----------
+      const wrapper = document.getElementById('reviewWrapper');
+      let ticket;
+      try {
+        ticket = JSON.parse(localStorage.getItem('tixxer_selected_ticket'));
+      } catch { ticket = null; }
+
+      if (!ticket) {
+        wrapper.innerHTML = `
+          <div class="review-empty">
+            <h2>No ticket selected</h2>
+            <p>Go back and search for a ticket to review.</p>
+            <a href="index.html">Back to Dashboard</a>
+          </div>`;
+        return;
+      }
+
+
+      // ---------- DERIVE DISPLAY VALUES ----------
+      const TYPE_MAP = {
+        movies:   { label: 'Movie Ticket',   icon: 'film' },
+        bus:      { label: 'Bus Ticket',      icon: 'bus' },
+        flights:  { label: 'Flight Ticket',   icon: 'plane' },
+        railways: { label: 'Railway Ticket',  icon: 'train' }
+      };
+
+      const typeInfo = TYPE_MAP[ticket.type] || { label: ticket.type, icon: 'ticket' };
+
+      // From / To (movies use city → theatre)
+      const from = ticket.type === 'movies' ? (ticket.city || '—') : (ticket.from || '—');
+      const to   = ticket.type === 'movies' ? (ticket.theatre || '—') : (ticket.to || '—');
+      const fromSub = ticket.type === 'movies' ? 'City' : 'From';
+      const toSub   = ticket.type === 'movies' ? 'Theatre' : 'To';
+
+      // Seat / Class
+      let seatClass = '—';
+      if (ticket.class)    seatClass = ticket.class;
+      else if (ticket.genre) seatClass = ticket.genre;
+      else if (ticket.operator) seatClass = ticket.operator;
+
+      // Date
+      const travelDate = ticket.date || new Date().toISOString().split('T')[0];
+
+      // SVG icons by type
+      const icons = {
+        film:  '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>',
+        bus:   '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16V6a4 4 0 014-4h8a4 4 0 014 4v10"/><rect x="3" y="16" width="18" height="4" rx="1"/><circle cx="7.5" cy="22" r="1"/><circle cx="16.5" cy="22" r="1"/></svg>',
+        plane: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>',
+        train: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="14" rx="2"/><line x1="4" y1="11" x2="20" y2="11"/><line x1="12" y1="3" x2="12" y2="11"/><circle cx="8" cy="19" r="1"/><circle cx="16" cy="19" r="1"/></svg>'
+      };
+
+
+      // ---------- BUILD REVIEW CARD + WALLET SECTION ----------
+      wrapper.innerHTML = `
+        <div class="review-card">
+
+          <!-- Type banner -->
+          <div class="review-type-banner">
+            <div class="review-type-icon">${icons[typeInfo.icon] || icons.film}</div>
+            <div>
+              <div class="review-type-label">${typeInfo.label}</div>
+              <div class="review-type-name">${ticket.name}</div>
+            </div>
+          </div>
+
+          <div class="review-body">
+
+            <!-- Route: From → To -->
+            <div class="review-route">
+              <div class="review-route-point">
+                <div class="review-route-city">${from}</div>
+                <div class="review-route-sub">${fromSub}</div>
+              </div>
+              <div class="review-route-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                <span>${ticket.duration || ''}</span>
+              </div>
+              <div class="review-route-point">
+                <div class="review-route-city">${to}</div>
+                <div class="review-route-sub">${toSub}</div>
+              </div>
+            </div>
+
+            <!-- Detail rows -->
+            <div class="review-row">
+              <span class="review-label">Ticket Type</span>
+              <span class="review-value">${typeInfo.label}</span>
+            </div>
+
+            <div class="review-row">
+              <span class="review-label">Date</span>
+              <span class="review-value">${formatDate(travelDate)}</span>
+            </div>
+
+            <div class="review-row">
+              <span class="review-label">Time</span>
+              <span class="review-value">${ticket.time || '—'}</span>
+            </div>
+
+            <div class="review-row">
+              <span class="review-label">Seat / Class</span>
+              <span class="review-value">${seatClass}</span>
+            </div>
+
+            ${ticket.airline ? `<div class="review-row"><span class="review-label">Airline</span><span class="review-value">${ticket.airline}</span></div>` : ''}
+            ${ticket.operator ? `<div class="review-row"><span class="review-label">Operator</span><span class="review-value">${ticket.operator}</span></div>` : ''}
+            ${ticket.train ? `<div class="review-row"><span class="review-label">Train No.</span><span class="review-value">${ticket.train}</span></div>` : ''}
+
+          </div>
+
+          <!-- Price bar -->
+          <div class="review-price-bar">
+            <span class="review-price-label">Total Price</span>
+            <span class="review-price-amount">\u20B9${ticket.price.toLocaleString('en-IN')}</span>
+          </div>
+
+        </div>
+
+        <!-- Wallet connect section -->
+        <div class="wallet-section">
+          <div class="wallet-section-title">Pay with MetaMask</div>
+          <div id="walletArea">
+            <button class="wallet-connect-btn" id="connectWalletBtn">
+              <svg class="metamask-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <path d="M9 12l2 2 4-4"/>
+              </svg>
+              Connect MetaMask Wallet
+            </button>
+          </div>
+          <div class="wallet-error" id="walletError"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="review-actions">
+          <button class="review-back" id="backBtn">Back</button>
+          <button class="review-confirm" id="confirmBtn">Confirm &amp; Pay</button>
+        </div>
+      `;
+
+
+      // ---------- WALLET CONNECT ----------
+      document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+
+
+      // ---------- BACK BUTTON ----------
+      document.getElementById('backBtn').addEventListener('click', () => {
+        history.back();
+      });
+
+
+      // ---------- CONFIRM & PAY — MetaMask Tx + POST /bookings ----------
+      document.getElementById('confirmBtn').addEventListener('click', async () => {
+        const btn = document.getElementById('confirmBtn');
+        const walletErr = document.getElementById('walletError');
+        walletErr.classList.remove('visible');
+
+        // Step 1: Ensure wallet is connected
+        if (!connectedAddress || !signer) {
+          await connectWallet();
+          if (!connectedAddress || !signer) return; // User rejected or no MetaMask
+        }
+
+        btn.classList.add('loading');
+
+        try {
+          // Step 2: Send transaction on Sepolia (0.0001 ETH)
+          const tx = await signer.sendTransaction({
+            to: RECEIVER_ADDRESS,
+            value: ethers.parseEther(PAYMENT_ETH)
+          });
+
+          // Step 3: Wait for 1 confirmation
+          const receipt = await tx.wait(1);
+          const txHash = receipt.hash;
+
+          // Step 4: Save booking to backend
+          const data = await apiCreateBooking({
+            userId: user._id,
+            type: typeInfo.label,
+            from: from,
+            to: to,
+            date: travelDate,
+            price: ticket.price,
+            walletAddress: connectedAddress,
+            transactionHash: txHash
+          });
+
+          if (data.error) {
+            btn.classList.remove('loading');
+            showWalletError(data.error);
+            return;
+          }
+
+          // Step 5: Update session with new totalSpent
+          const currentUser = getCurrentUser();
+          if (currentUser) {
+            currentUser.totalSpent = (currentUser.totalSpent || 0) + ticket.price;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          }
+
+          // Step 6: Clean up selected ticket
+          localStorage.removeItem('tixxer_selected_ticket');
+
+          // Step 7: Show confirmation page
+          showConfirmation({
+            txHash,
+            walletAddress: connectedAddress,
+            type: typeInfo.label,
+            from,
+            to,
+            date: formatDate(travelDate),
+            price: ticket.price,
+            name: ticket.name
+          });
+
+        } catch (err) {
+          btn.classList.remove('loading');
+
+          // User rejected the transaction
+          if (err.code === 'ACTION_REJECTED' || err.code === 4001) {
+            showWalletError('Transaction was rejected. Please try again.');
+          } else if (err.message && err.message.includes('insufficient funds')) {
+            showWalletError('Insufficient Sepolia ETH. Get test ETH from a faucet.');
+          } else {
+            showWalletError('Transaction failed: ' + (err.shortMessage || err.message || 'Unknown error'));
+          }
+        }
+      });
+
+    });
+
+
+    /* ================================================
+       HELPER FUNCTIONS
+       ================================================ */
+
+    /**
+     * Connect to MetaMask via ethers.js v6 BrowserProvider.
+     * Switches to Sepolia if on wrong network.
+     */
+    async function connectWallet() {
+      const walletArea = document.getElementById('walletArea');
+      const walletErr = document.getElementById('walletError');
+      walletErr.classList.remove('visible');
+
+      // Check if MetaMask is installed
+      if (typeof window.ethereum === 'undefined') {
+        showWalletError('MetaMask not detected. Please install MetaMask to continue.');
+        return;
+      }
+
+      try {
+        // Request account access
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        signer = await provider.getSigner();
+        connectedAddress = await signer.getAddress();
+
+        // Check network — switch to Sepolia if needed
+        const network = await provider.getNetwork();
+        if (network.chainId !== 11155111n) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: SEPOLIA_CHAIN_ID }]
+            });
+            // Re-initialize after network switch
+            const newProvider = new ethers.BrowserProvider(window.ethereum);
+            signer = await newProvider.getSigner();
+            connectedAddress = await signer.getAddress();
+          } catch (switchErr) {
+            showWalletError('Please switch to Sepolia testnet in MetaMask.');
+            connectedAddress = null;
+            signer = null;
+            return;
+          }
+        }
+
+        // Show connected state
+        const truncAddr = connectedAddress.slice(0, 6) + '...' + connectedAddress.slice(-4);
+        walletArea.innerHTML = `
+          <div class="wallet-connected">
+            <div class="wallet-connected-dot"></div>
+            <div class="wallet-connected-info">
+              <div class="wallet-connected-label">Connected</div>
+              <div class="wallet-connected-address">${truncAddr}</div>
+            </div>
+            <span class="wallet-network-badge">Sepolia</span>
+          </div>
+        `;
+
+      } catch (err) {
+        if (err.code === 4001) {
+          showWalletError('Connection rejected. Please approve the MetaMask request.');
+        } else {
+          showWalletError('Could not connect wallet: ' + (err.shortMessage || err.message));
+        }
+        connectedAddress = null;
+        signer = null;
+      }
+    }
+
+
+    /**
+     * Show a wallet error message.
+     */
+    function showWalletError(msg) {
+      const el = document.getElementById('walletError');
+      el.textContent = msg;
+      el.classList.add('visible');
+    }
+
+
+    /**
+     * Display the confirmation page after successful payment.
+     */
+    function showConfirmation({ txHash, walletAddress, type, from, to, date, price, name }) {
+      const overlay = document.getElementById('confirmationOverlay');
+      const content = document.getElementById('confirmationContent');
+
+      const truncWallet = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+      const etherscanUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
+
+      content.innerHTML = `
+        <!-- Checkmark -->
+        <div class="confirm-check-ring">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+
+        <h2 class="confirm-title">Ticket Confirmed!</h2>
+        <p class="confirm-subtitle">Your payment was successful and your booking has been saved.</p>
+
+        <!-- Transaction details -->
+        <div class="confirm-tx-card">
+          <div class="confirm-tx-title">Transaction Details</div>
+
+          <div class="confirm-tx-row">
+            <span class="confirm-tx-label">Tx Hash</span>
+            <span class="confirm-tx-value">
+              <a href="${etherscanUrl}" target="_blank" rel="noopener">${txHash.slice(0, 10)}...${txHash.slice(-8)}</a>
+            </span>
+          </div>
+
+          <div class="confirm-tx-row">
+            <span class="confirm-tx-label">Wallet</span>
+            <span class="confirm-tx-value">${truncWallet}</span>
+          </div>
+
+          <div class="confirm-tx-row">
+            <span class="confirm-tx-label">Network</span>
+            <span class="confirm-tx-value">Sepolia Testnet</span>
+          </div>
+
+          <div class="confirm-tx-row">
+            <span class="confirm-tx-label">Amount</span>
+            <span class="confirm-tx-value">${PAYMENT_ETH} ETH</span>
+          </div>
+        </div>
+
+        <!-- Ticket details -->
+        <div class="confirm-ticket-card">
+          <div class="confirm-ticket-title">Ticket Details</div>
+
+          <div class="confirm-ticket-row">
+            <span class="confirm-ticket-label">Type</span>
+            <span class="confirm-ticket-value">${type}</span>
+          </div>
+
+          <div class="confirm-ticket-row">
+            <span class="confirm-ticket-label">Name</span>
+            <span class="confirm-ticket-value">${name}</span>
+          </div>
+
+          <div class="confirm-ticket-row">
+            <span class="confirm-ticket-label">Route</span>
+            <span class="confirm-ticket-value">${from} &rarr; ${to}</span>
+          </div>
+
+          <div class="confirm-ticket-row">
+            <span class="confirm-ticket-label">Date</span>
+            <span class="confirm-ticket-value">${date}</span>
+          </div>
+
+          <div class="confirm-ticket-row">
+            <span class="confirm-ticket-label">Price</span>
+            <span class="confirm-ticket-price">\u20B9${price.toLocaleString('en-IN')}</span>
+          </div>
+        </div>
+
+        <a href="index.html" class="confirm-dashboard-btn">Go to Dashboard</a>
+      `;
+
+      overlay.classList.add('visible');
+    }
+
+
+    /**
+     * Format a date string (YYYY-MM-DD) into a readable format.
+     */
+    function formatDate(dateStr) {
+      try {
+        const d = new Date(dateStr + 'T00:00:00');
+        return d.toLocaleDateString('en-IN', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        });
+      } catch {
+        return dateStr;
+      }
+    }
+  </script>
+</body>
+</html>
