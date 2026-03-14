@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tickets - Tixxer</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ── My Tickets Page ── */
+
+        .tickets-page {
+            min-height: 100vh;
+            padding: 140px 48px 80px;
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .tickets-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .tickets-label {
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent-light);
+            margin-bottom: 16px;
+        }
+
+        .tickets-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 500;
+            color: var(--text-white);
+            margin-bottom: 12px;
+        }
+
+        .tickets-subtitle {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: var(--text-grey);
+        }
+
+        /* Connect wallet prompt */
+        .wallet-prompt {
+            text-align: center;
+            padding: 80px 24px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+        }
+
+        .wallet-prompt-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .wallet-prompt-text {
+            font-size: 1.05rem;
+            font-weight: 300;
+            color: var(--text-grey);
+            margin-bottom: 28px;
+        }
+
+        .wallet-connect-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 36px;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-white);
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.4s;
+        }
+
+        .wallet-connect-btn:hover {
+            background: transparent;
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .wallet-connect-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Connected state */
+        .wallet-connected-info {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 16px 24px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+            display: none;
+        }
+
+        .wallet-connected-info .wallet-addr {
+            font-size: 0.9rem;
+            color: var(--accent-light);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .wallet-connected-info .wallet-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        /* Loading state */
+        .tickets-loading {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text-muted);
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .tickets-empty {
+            text-align: center;
+            padding: 80px 24px;
+            display: none;
+        }
+
+        .tickets-empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .tickets-empty-text {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        /* Tickets grid */
+        .tickets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 24px;
+        }
+
+        /* Ticket card */
+        .ticket-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .ticket-card:hover {
+            border-color: rgba(124, 91, 245, 0.3);
+            transform: translateY(-4px);
+        }
+
+        /* Card top: category badge */
+        .ticket-card-top {
+            padding: 16px 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-category {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .ticket-category.movie {
+            background: rgba(239, 69, 102, 0.15);
+            color: #EF4566;
+        }
+
+        .ticket-category.bus {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .ticket-category.flight {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .ticket-category.train {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .ticket-status {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #4CD964;
+        }
+
+        /* Card body */
+        .ticket-card-body {
+            padding: 16px 20px 20px;
+        }
+
+        .ticket-name {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--text-white);
+            margin-bottom: 16px;
+        }
+
+        .ticket-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .ticket-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .ticket-info-label {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .ticket-info-value {
+            font-size: 0.88rem;
+            font-weight: 400;
+            color: var(--text-white);
+        }
+
+        .ticket-info-value.highlight {
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+
+        /* Card footer */
+        .ticket-card-footer {
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-booked-date {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .ticket-tx-link {
+            font-size: 0.72rem;
+            color: var(--accent-light);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .ticket-tx-link:hover {
+            color: var(--text-white);
+        }
+
+        /* Tickets count */
+        .tickets-count {
+            margin-bottom: 24px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .tickets-count strong {
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .tickets-page {
+                padding: 110px 24px 60px;
+            }
+            .tickets-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar" id="navbar">
+        <a href="../index.html" class="nav-logo">TIXXER</a>
+        <ul class="nav-links">
+            <li><a href="../index.html#movies">Movies</a></li>
+            <li><a href="../index.html#bus">Bus</a></li>
+            <li><a href="../index.html#flights">Flights</a></li>
+            <li><a href="../index.html#railways">Railways</a></li>
+            <li><a href="my-tickets.html" style="color: var(--text-white);">My Tickets</a></li>
+        </ul>
+        <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <ul>
+            <li><a href="../index.html#movies">Movies</a></li>
+            <li><a href="../index.html#bus">Bus</a></li>
+            <li><a href="../index.html#flights">Flights</a></li>
+            <li><a href="../index.html#railways">Railways</a></li>
+            <li><a href="my-tickets.html">My Tickets</a></li>
+        </ul>
+    </div>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="tickets-page">
+
+        <div class="tickets-header">
+            <p class="tickets-label">YOUR BOOKINGS</p>
+            <h1 class="tickets-title">My Tickets</h1>
+            <p class="tickets-subtitle">All your bookings across Movies, Bus, Flights & Railways</p>
+        </div>
+
+        <!-- Wallet connect prompt (shown before connecting) -->
+        <div id="walletPrompt" class="wallet-prompt">
+            <div class="wallet-prompt-icon">&#128274;</div>
+            <p class="wallet-prompt-text">
+                Connect your MetaMask wallet to view your booked tickets.<br>
+                Your wallet address is used to identify your bookings.
+            </p>
+            <button class="wallet-connect-btn" id="connectBtn">
+                Connect MetaMask
+            </button>
+        </div>
+
+        <!-- Connected wallet info (shown after connecting) -->
+        <div id="walletInfo" class="wallet-connected-info">
+            <p class="wallet-label">Connected Wallet</p>
+            <p class="wallet-addr" id="walletAddr"></p>
+        </div>
+
+        <!-- Loading state -->
+        <div id="ticketsLoading" class="tickets-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading your tickets...</p>
+        </div>
+
+        <!-- Empty state -->
+        <div id="ticketsEmpty" class="tickets-empty">
+            <div class="tickets-empty-icon">&#127915;</div>
+            <p class="tickets-empty-text">No tickets found for this wallet. Book a movie to get started!</p>
+        </div>
+
+        <!-- Tickets count -->
+        <div id="ticketsCount" class="tickets-count" style="display:none;"></div>
+
+        <!-- Tickets grid -->
+        <div id="ticketsGrid" class="tickets-grid"></div>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3 class="footer-logo">TIXXER</h3>
+                <p class="footer-tagline">Book anything.<br>Travel everywhere.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="../index.html#movies">Movies</a></li>
+                    <li><a href="../index.html#bus">Bus</a></li>
+                    <li><a href="../index.html#flights">Flights</a></li>
+                    <li><a href="../index.html#railways">Railways</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Connect</h4>
+                <ul>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">LinkedIn</a></li>
+                    <li><a href="#">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Tixxer. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    (function () {
+        // DOM refs
+        var connectBtn = document.getElementById('connectBtn');
+        var walletPrompt = document.getElementById('walletPrompt');
+        var walletInfo = document.getElementById('walletInfo');
+        var walletAddr = document.getElementById('walletAddr');
+        var ticketsLoading = document.getElementById('ticketsLoading');
+        var ticketsEmpty = document.getElementById('ticketsEmpty');
+        var ticketsCount = document.getElementById('ticketsCount');
+        var ticketsGrid = document.getElementById('ticketsGrid');
+
+        // Hamburger toggle
+        var hamburger = document.getElementById('hamburger');
+        var mobileMenu = document.getElementById('mobileMenu');
+        if (hamburger) {
+            hamburger.addEventListener('click', function () {
+                hamburger.classList.toggle('active');
+                mobileMenu.classList.toggle('open');
+            });
+        }
+
+        // Navbar scroll effect
+        var navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        // Start scrolled since this page has no hero
+        navbar.classList.add('scrolled');
+
+        // Connect MetaMask
+        connectBtn.addEventListener('click', async function () {
+            if (typeof window.ethereum === 'undefined') {
+                alert('MetaMask is not installed.\nPlease install it from https://metamask.io');
+                return;
+            }
+
+            connectBtn.disabled = true;
+            connectBtn.textContent = 'Connecting...';
+
+            try {
+                var accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+                var address = accounts[0];
+
+                // Show connected state
+                walletPrompt.style.display = 'none';
+                walletInfo.style.display = 'block';
+                walletAddr.textContent = address;
+
+                // Fetch tickets
+                loadTickets(address);
+
+            } catch (err) {
+                connectBtn.disabled = false;
+                connectBtn.textContent = 'Connect MetaMask';
+                if (err.code !== 4001) {
+                    alert('Connection error: ' + err.message);
+                }
+            }
+        });
+
+        // Format date nicely
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            var d = new Date(dateStr);
+            if (isNaN(d)) return dateStr;
+            var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            var months = ['Jan','Feb','Mar','Apr','May','Jun',
+                          'Jul','Aug','Sep','Oct','Nov','Dec'];
+            return days[d.getDay()] + ', ' + d.getDate() + ' ' +
+                   months[d.getMonth()] + ' ' + d.getFullYear();
+        }
+
+        // Format booked-at timestamp
+        function formatTimestamp(ts) {
+            if (!ts) return '';
+            var d = new Date(ts);
+            return d.toLocaleDateString('en-GB', {
+                day: 'numeric', month: 'short', year: 'numeric'
+            }) + ' at ' + d.toLocaleTimeString('en-GB', {
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        // Detect ticket category from booking data
+        function getCategory(booking) {
+            // For now all are movie tickets.
+            // Future: check booking.category field
+            return booking.category || 'movie';
+        }
+
+        // Category display names
+        var categoryLabels = {
+            movie: 'Movie',
+            bus: 'Bus',
+            flight: 'Flight',
+            train: 'Train'
+        };
+
+        // Load tickets from API
+        function loadTickets(walletAddress) {
+            ticketsLoading.style.display = 'block';
+            ticketsEmpty.style.display = 'none';
+            ticketsCount.style.display = 'none';
+            ticketsGrid.innerHTML = '';
+
+            fetch('/api/get-bookings?wallet=' + encodeURIComponent(walletAddress))
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    ticketsLoading.style.display = 'none';
+
+                    if (!data.success || data.count === 0) {
+                        ticketsEmpty.style.display = 'block';
+                        return;
+                    }
+
+                    // Show count
+                    ticketsCount.innerHTML =
+                        '<strong>' + data.count + '</strong> ticket' +
+                        (data.count === 1 ? '' : 's') + ' found';
+                    ticketsCount.style.display = 'block';
+
+                    // Render cards
+                    var html = '';
+                    data.bookings.forEach(function (b) {
+                        var cat = getCategory(b);
+                        var seats = Array.isArray(b.seats) ? b.seats.join(', ') : (b.seats || '-');
+                        var shortTx = b.txHash
+                            ? b.txHash.slice(0, 10) + '...' + b.txHash.slice(-6)
+                            : '';
+                        var txLink = b.txHash
+                            ? 'https://sepolia.etherscan.io/tx/' + b.txHash
+                            : '#';
+
+                        html +=
+                        '<div class="ticket-card">' +
+                        '  <div class="ticket-card-top">' +
+                        '    <span class="ticket-category ' + cat + '">' +
+                              (categoryLabels[cat] || 'Ticket') + '</span>' +
+                        '    <span class="ticket-status">Confirmed</span>' +
+                        '  </div>' +
+                        '  <div class="ticket-card-body">' +
+                        '    <h3 class="ticket-name">' + (b.movieName || b.name || 'Booking') + '</h3>' +
+                        '    <div class="ticket-info-grid">' +
+                        '      <div class="ticket-info-item">' +
+                        '        <span class="ticket-info-label">Date</span>' +
+                        '        <span class="ticket-info-value">' + formatDate(b.date) + '</span>' +
+                        '      </div>' +
+                        '      <div class="ticket-info-item">' +
+                        '        <span class="ticket-info-label">Time</span>' +
+                        '        <span class="ticket-info-value">' + (b.time || '-') + '</span>' +
+                        '      </div>' +
+                        '      <div class="ticket-info-item">' +
+                        '        <span class="ticket-info-label">Seats</span>' +
+                        '        <span class="ticket-info-value">' + seats + '</span>' +
+                        '      </div>' +
+                        '      <div class="ticket-info-item">' +
+                        '        <span class="ticket-info-label">Amount</span>' +
+                        '        <span class="ticket-info-value highlight">' +
+                                  (b.totalETH || '0') + ' ETH</span>' +
+                        '      </div>' +
+                        '    </div>' +
+                        '  </div>' +
+                        '  <div class="ticket-card-footer">' +
+                        '    <span class="ticket-booked-date">' +
+                              formatTimestamp(b.bookedAt) + '</span>' +
+                        (b.txHash ?
+                        '    <a class="ticket-tx-link" href="' + txLink + '" ' +
+                        '       target="_blank" rel="noopener">' + shortTx + '</a>'
+                        : '') +
+                        '  </div>' +
+                        '</div>';
+                    });
+
+                    ticketsGrid.innerHTML = html;
+                })
+                .catch(function (err) {
+                    ticketsLoading.style.display = 'none';
+                    ticketsEmpty.style.display = 'block';
+                    document.querySelector('.tickets-empty-text').textContent =
+                        'Failed to load tickets. Please try again.';
+                    console.error('Fetch error:', err);
+                });
+        }
+    })();
+    </script>
+
+</body>
+</html>
