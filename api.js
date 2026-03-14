@@ -3,7 +3,7 @@
    Connects frontend to Express backend via fetch()
    ================================================ */
 
-const API_BASE = 'https://tixxer-api.vercel.app';
+const API_BASE = 'https://server-iota-ruby-88.vercel.app';
 
 /**
  * Signup a new user.
