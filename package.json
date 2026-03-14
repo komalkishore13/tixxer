@@ -1,9 +1,0 @@
-{
-  "name": "tixxer",
-  "version": "1.0.0",
-  "description": "Web3 movie ticket booking app — Sepolia testnet",
-  "private": true,
-  "dependencies": {
-    "mongodb": "^6.12.0"
-  }
-}

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Tickets - Tixxer</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -330,12 +330,12 @@
 
     <!-- ========== NAVBAR ========== -->
     <nav class="navbar" id="navbar">
-        <a href="../index.html" class="nav-logo">TIXXER</a>
+        <a href="index.html" class="nav-logo">TIXXER</a>
         <ul class="nav-links">
-            <li><a href="../index.html#movies">Movies</a></li>
-            <li><a href="../index.html#bus">Bus</a></li>
-            <li><a href="../index.html#flights">Flights</a></li>
-            <li><a href="../index.html#railways">Railways</a></li>
+            <li><a href="index.html#movies">Movies</a></li>
+            <li><a href="index.html#bus">Bus</a></li>
+            <li><a href="index.html#flights">Flights</a></li>
+            <li><a href="index.html#railways">Railways</a></li>
             <li><a href="my-tickets.html" style="color: var(--text-white);">My Tickets</a></li>
         </ul>
         <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
@@ -348,10 +348,10 @@
     <!-- Mobile menu -->
     <div class="mobile-menu" id="mobileMenu">
         <ul>
-            <li><a href="../index.html#movies">Movies</a></li>
-            <li><a href="../index.html#bus">Bus</a></li>
-            <li><a href="../index.html#flights">Flights</a></li>
-            <li><a href="../index.html#railways">Railways</a></li>
+            <li><a href="index.html#movies">Movies</a></li>
+            <li><a href="index.html#bus">Bus</a></li>
+            <li><a href="index.html#flights">Flights</a></li>
+            <li><a href="index.html#railways">Railways</a></li>
             <li><a href="my-tickets.html">My Tickets</a></li>
         </ul>
     </div>
@@ -371,7 +371,7 @@
             <p class="wallet-prompt-text">
                 Log in to your Tixxer account to view your booked tickets.
             </p>
-            <a href="../login.html?redirect=pages/my-tickets.html" class="wallet-connect-btn" style="text-decoration:none;">
+            <a href="login.html?redirect=my-tickets.html" class="wallet-connect-btn" style="text-decoration:none;">
                 Log In
             </a>
         </div>
@@ -412,10 +412,10 @@
             <div class="footer-col">
                 <h4>Services</h4>
                 <ul>
-                    <li><a href="../index.html#movies">Movies</a></li>
-                    <li><a href="../index.html#bus">Bus</a></li>
-                    <li><a href="../index.html#flights">Flights</a></li>
-                    <li><a href="../index.html#railways">Railways</a></li>
+                    <li><a href="index.html#movies">Movies</a></li>
+                    <li><a href="index.html#bus">Bus</a></li>
+                    <li><a href="index.html#flights">Flights</a></li>
+                    <li><a href="index.html#railways">Railways</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -443,7 +443,7 @@
     </footer>
 
     <!-- Session management (provides getCurrentUser) -->
-    <script src="../session.js"></script>
+    <script src="session.js"></script>
 
     <script>
     (function () {
@@ -529,7 +529,7 @@
             ticketsCount.style.display = 'none';
             ticketsGrid.innerHTML = '';
 
-            fetch('/api/get-bookings?email=' + encodeURIComponent(email))
+            fetch('https://tixxer-movie.vercel.app/api/get-bookings?email=' + encodeURIComponent(email))
                 .then(function (res) { return res.json(); })
                 .then(function (data) {
                     ticketsLoading.style.display = 'none';

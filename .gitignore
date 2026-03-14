@@ -1,8 +1,20 @@
 node_modules/
 .env
+.vercel
+.vscode/
+.claude/
 
 # Sub-projects (separate repos)
 tixxer-bus/
 Tixxer-flight/
 Tixxer-movie/
 tixxer-railway/
+
+# Movie app files (belong in tixxer-movie repo)
+js/
+css/
+pages/
+api/
+package.json
+package-lock.json
+vercel.json
