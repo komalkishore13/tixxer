@@ -44,7 +44,9 @@ module.exports = async function handler(req, res) {
             seats,
             totalETH,
             walletAddress,
-            txHash
+            txHash,
+            userName,
+            userEmail
         } = req.body;
 
         // Validate required fields
@@ -69,6 +71,9 @@ module.exports = async function handler(req, res) {
             totalETH:      totalETH,
             walletAddress: walletAddress || 'unknown',
             txHash:        txHash,
+            userName:      userName || '',
+            userEmail:     userEmail || '',
+            category:      'movie',
             bookedAt:      new Date()
         };
 

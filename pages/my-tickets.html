@@ -365,22 +365,21 @@
             <p class="tickets-subtitle">All your bookings across Movies, Bus, Flights & Railways</p>
         </div>
 
-        <!-- Wallet connect prompt (shown before connecting) -->
-        <div id="walletPrompt" class="wallet-prompt">
+        <!-- Login prompt (shown when not logged in) -->
+        <div id="loginPrompt" class="wallet-prompt" style="display:none;">
             <div class="wallet-prompt-icon">&#128274;</div>
             <p class="wallet-prompt-text">
-                Connect your MetaMask wallet to view your booked tickets.<br>
-                Your wallet address is used to identify your bookings.
+                Log in to your Tixxer account to view your booked tickets.
             </p>
-            <button class="wallet-connect-btn" id="connectBtn">
-                Connect MetaMask
-            </button>
+            <a href="../login.html?redirect=pages/my-tickets.html" class="wallet-connect-btn" style="text-decoration:none;">
+                Log In
+            </a>
         </div>
 
-        <!-- Connected wallet info (shown after connecting) -->
-        <div id="walletInfo" class="wallet-connected-info">
-            <p class="wallet-label">Connected Wallet</p>
-            <p class="wallet-addr" id="walletAddr"></p>
+        <!-- User info (shown when logged in) -->
+        <div id="userInfo" class="wallet-connected-info" style="display:none;">
+            <p class="wallet-label">Logged in as</p>
+            <p class="wallet-addr" id="userName"></p>
         </div>
 
         <!-- Loading state -->
@@ -392,7 +391,7 @@
         <!-- Empty state -->
         <div id="ticketsEmpty" class="tickets-empty">
             <div class="tickets-empty-icon">&#127915;</div>
-            <p class="tickets-empty-text">No tickets found for this wallet. Book a movie to get started!</p>
+            <p class="tickets-empty-text">No tickets found. Book a movie to get started!</p>
         </div>
 
         <!-- Tickets count -->
@@ -443,13 +442,15 @@
         </div>
     </footer>
 
+    <!-- Session management (provides getCurrentUser) -->
+    <script src="../session.js"></script>
+
     <script>
     (function () {
         // DOM refs
-        var connectBtn = document.getElementById('connectBtn');
-        var walletPrompt = document.getElementById('walletPrompt');
-        var walletInfo = document.getElementById('walletInfo');
-        var walletAddr = document.getElementById('walletAddr');
+        var loginPrompt = document.getElementById('loginPrompt');
+        var userInfo = document.getElementById('userInfo');
+        var userNameEl = document.getElementById('userName');
         var ticketsLoading = document.getElementById('ticketsLoading');
         var ticketsEmpty = document.getElementById('ticketsEmpty');
         var ticketsCount = document.getElementById('ticketsCount');
@@ -474,41 +475,21 @@
                 navbar.classList.remove('scrolled');
             }
         });
-        // Start scrolled since this page has no hero
         navbar.classList.add('scrolled');
 
-        // Connect MetaMask
-        connectBtn.addEventListener('click', async function () {
-            if (typeof window.ethereum === 'undefined') {
-                alert('MetaMask is not installed.\nPlease install it from https://metamask.io');
-                return;
-            }
+        // Check login state
+        var user = getCurrentUser();
 
-            connectBtn.disabled = true;
-            connectBtn.textContent = 'Connecting...';
+        if (!user) {
+            // Not logged in — show login prompt
+            loginPrompt.style.display = 'block';
+            return;
+        }
 
-            try {
-                var accounts = await window.ethereum.request({
-                    method: 'eth_requestAccounts'
-                });
-                var address = accounts[0];
-
-                // Show connected state
-                walletPrompt.style.display = 'none';
-                walletInfo.style.display = 'block';
-                walletAddr.textContent = address;
-
-                // Fetch tickets
-                loadTickets(address);
-
-            } catch (err) {
-                connectBtn.disabled = false;
-                connectBtn.textContent = 'Connect MetaMask';
-                if (err.code !== 4001) {
-                    alert('Connection error: ' + err.message);
-                }
-            }
-        });
+        // Logged in — show user info and auto-load tickets
+        userInfo.style.display = 'block';
+        userNameEl.textContent = user.name + ' (' + user.email + ')';
+        loadTickets(user.email);
 
         // Format date nicely
         function formatDate(dateStr) {
@@ -533,13 +514,6 @@
             });
         }
 
-        // Detect ticket category from booking data
-        function getCategory(booking) {
-            // For now all are movie tickets.
-            // Future: check booking.category field
-            return booking.category || 'movie';
-        }
-
         // Category display names
         var categoryLabels = {
             movie: 'Movie',
@@ -548,14 +522,14 @@
             train: 'Train'
         };
 
-        // Load tickets from API
-        function loadTickets(walletAddress) {
+        // Load tickets from API by user email
+        function loadTickets(email) {
             ticketsLoading.style.display = 'block';
             ticketsEmpty.style.display = 'none';
             ticketsCount.style.display = 'none';
             ticketsGrid.innerHTML = '';
 
-            fetch('/api/get-bookings?wallet=' + encodeURIComponent(walletAddress))
+            fetch('/api/get-bookings?email=' + encodeURIComponent(email))
                 .then(function (res) { return res.json(); })
                 .then(function (data) {
                     ticketsLoading.style.display = 'none';
@@ -574,7 +548,7 @@
                     // Render cards
                     var html = '';
                     data.bookings.forEach(function (b) {
-                        var cat = getCategory(b);
+                        var cat = b.category || 'movie';
                         var seats = Array.isArray(b.seats) ? b.seats.join(', ') : (b.seats || '-');
                         var shortTx = b.txHash
                             ? b.txHash.slice(0, 10) + '...' + b.txHash.slice(-6)

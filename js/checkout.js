@@ -279,6 +279,7 @@ async function handlePayment() {
         // --- Save booking to MongoDB ---
         // This runs in the background — we don't block the redirect for it.
         // If it fails, the ticket still shows (data is in sessionStorage).
+        // Include logged-in user info so bookings are linked to their account.
         saveBookingToDatabase({
             movieId:       CHECKOUT_MOVIE_ID,
             movieName:     movie ? movie.title : 'Unknown',
@@ -287,7 +288,9 @@ async function handlePayment() {
             seats:         CHECKOUT_SEATS.split(','),
             totalETH:      TOTAL_ETH,
             walletAddress: walletState.address || 'unknown',
-            txHash:        result.txHash
+            txHash:        result.txHash,
+            userName:      tixxerUser ? tixxerUser.name : '',
+            userEmail:     tixxerUser ? tixxerUser.email : ''
         });
 
         // Build ticket page URL with movie ID for backdrop

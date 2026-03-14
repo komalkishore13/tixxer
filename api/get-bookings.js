@@ -32,10 +32,15 @@ module.exports = async function handler(req, res) {
 
     try {
         // Read optional filters from query params
-        const { wallet, movieId, limit } = req.query;
+        const { wallet, movieId, email, limit } = req.query;
 
         // Build the MongoDB query filter
         const filter = {};
+
+        if (email) {
+            // Filter by user email (case-insensitive)
+            filter.userEmail = new RegExp('^' + email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i');
+        }
 
         if (wallet) {
             // Case-insensitive match for wallet addresses
