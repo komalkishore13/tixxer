@@ -1,0 +1,2462 @@
+/*
+ * STYLE.CSS
+ * =========
+ * Main stylesheet for the Tixxer application.
+ *
+ * Sections:
+ * 1. CSS Variables
+ * 2. Reset & Base Styles
+ * 3. Navbar
+ * 4. Hero Section
+ * 5. Movie Grid & Cards
+ * 6. Buttons
+ * 7. Footer
+ * 8. (Future sections: Movie Details, Seats, Checkout, Confirmation)
+ *
+ * Responsive overrides are in responsive.css
+ */
+
+
+/* =============================================
+   1. CSS VARIABLES
+   ============================================= */
+:root {
+    /* Brand Colors — Light Pastel palette */
+    --primary: #EF4566;         /* Coral accent */
+    --primary-hover: #F69A9A;   /* Soft pink on hover */
+    --primary-glow: rgba(239, 69, 102, 0.25);  /* Glow effect */
+    --accent: #83AE9B;          /* Teal green */
+
+    /* Palette extras */
+    --pink-light: #F69A9A;      /* Soft pink */
+    --peach: #F9CD8F;           /* Warm golden peach */
+    --sage: #CCC8A9;            /* Muted sage */
+    --teal: #83AE9B;            /* Teal green */
+
+    /* Backgrounds — LIGHT THEME */
+    --bg-dark: #83AE9B;         /* Page background (teal) */
+    --bg-card: #FFFFFF;         /* Card surface (white) */
+    --bg-card-hover: #F5F3EE;   /* Card hover state */
+    --bg-navbar: rgba(255, 255, 255, 0.9); /* Navbar (white glass) */
+    --bg-input: #F0EDE6;        /* Input fields (warm off-white) */
+
+    /* Text — dark on light */
+    --text-primary: #2D2D2D;
+    --text-secondary: #5A5A52;
+    --text-muted: #8A8A7E;
+
+    /* Borders */
+    --border: #D8D5CC;
+    --border-light: #E5E2DA;
+
+    /* Seat Colors */
+    --seat-available: #E8E5DD;
+    --seat-selected: #EF4566;
+    --seat-booked: #C5C5C5;
+
+    /* Status */
+    --success: #83AE9B;
+    --error: #EF4566;
+    --warning: #F9CD8F;
+
+    /* Spacing Scale */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 40px;
+    --space-2xl: 64px;
+    --space-3xl: 80px;
+
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+
+    /* Typography */
+    --font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* Shadows — softer for light theme */
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --shadow-btn: 0 4px 16px rgba(239, 69, 102, 0.3);
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* =============================================
+   2. RESET & BASE STYLES
+   ============================================= */
+
+/* Remove default margins, paddings, and set box-sizing */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base body styles: pastel gradient background (pink → peach → teal) */
+body {
+    font-family: var(--font-family);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg,
+        #F06292 0%,
+        #F4909A 15%,
+        #F8B4A0 28%,
+        #F5D5BE 40%,
+        #E8E0C8 50%,
+        #C8DBC8 60%,
+        #A3C8B0 72%,
+        #83AE9B 85%,
+        #6FA396 100%
+    );
+    background-attachment: fixed;
+}
+
+/* Remove default link underline */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Remove list styles */
+ul, ol {
+    list-style: none;
+}
+
+/* Smooth image rendering */
+img {
+    max-width: 100%;
+    display: block;
+}
+
+
+/* =============================================
+   3. NAVBAR
+   ============================================= */
+
+/*
+ * Fixed navbar at the top of the page.
+ * Uses backdrop blur for a frosted glass effect.
+ * Three-column layout: left badge, centered logo, right (empty/future).
+ */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) var(--space-xl);
+    background: var(--bg-navbar);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+}
+
+.navbar-left,
+.navbar-right {
+    flex: 1;
+}
+
+.navbar-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.navbar-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Brand text in center of navbar */
+.nav-brand-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #6B9E8A;
+    letter-spacing: -0.5px;
+}
+
+/* Logo image */
+.logo-img {
+    height: 30px;
+    width: auto;
+}
+
+/* Wallet connect button in navbar */
+.wallet-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--pink-light);
+    color: #FFFFFF;
+    border: 1px solid var(--pink-light);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color var(--transition-smooth),
+                border-color var(--transition-smooth),
+                background-color var(--transition-smooth),
+                box-shadow var(--transition-smooth);
+}
+
+.wallet-btn:hover {
+    color: #FFFFFF;
+    border-color: var(--primary);
+    background: var(--primary);
+    box-shadow: 0 4px 16px rgba(239, 69, 102, 0.3);
+}
+
+/* Wallet button after successful connection */
+.wallet-btn.wallet-connected-btn {
+    color: #FFFFFF;
+    background: var(--success);
+    border-color: var(--success);
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Small green dot shown inside navbar button when connected */
+.status-dot-nav {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+
+/* =============================================
+   4. HERO SECTION
+   ============================================= */
+
+/*
+ * Marquee advertisement bar below the navbar.
+ * Text scrolls continuously from right to left.
+ */
+.site-desc-bar {
+    margin-top: 54px;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-light);
+    background: rgba(255, 255, 255, 0.5);
+    padding: var(--space-xs) 0;
+}
+
+.marquee-track {
+    display: inline-flex;
+    animation: marquee 20s linear infinite;
+}
+
+.site-desc-text {
+    color: #7A7A7A;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    padding: 0 var(--space-xl);
+    flex-shrink: 0;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/*
+ * Search bar section between marquee and movie listings.
+ */
+.search-bar-section {
+    padding: var(--space-lg) var(--space-xl);
+    display: flex;
+    justify-content: center;
+}
+
+.search-wrapper {
+    width: 100%;
+    max-width: 620px;
+}
+
+.search-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    font-family: var(--font-family);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.search-input::placeholder {
+    color: #AAAAAA;
+}
+
+.search-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(239, 69, 102, 0.1);
+}
+
+/* No results message */
+.no-results {
+    text-align: center;
+    padding: var(--space-3xl) var(--space-xl);
+}
+
+.no-results-text {
+    color: #999;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+
+/* =============================================
+   5. MOVIE GRID & CARDS
+   ============================================= */
+
+/* Container: constrains content width and centers it */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-xl);
+    flex: 1; /* Pushes footer to bottom */
+}
+
+/* Section heading for "Now Showing" */
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: var(--space-lg);
+    color: var(--text-primary);
+    position: relative;
+    padding-left: var(--space-md);
+}
+
+/* Purple accent bar before the section title */
+.section-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+/*
+ * Movie Grid: CSS Grid layout.
+ * 4 columns on desktop, shrinks on smaller screens (see responsive.css).
+ */
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+    padding-bottom: var(--space-2xl);
+}
+
+/* Card link wrapper: makes the entire card clickable */
+.movie-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+/*
+ * Movie Card: Each card contains a poster and info section.
+ * Has a hover effect that lifts the card and adds a glow.
+ */
+.movie-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform var(--transition-smooth),
+                border-color var(--transition-smooth),
+                box-shadow var(--transition-smooth);
+    cursor: pointer;
+}
+
+.movie-card:hover,
+.movie-card-link:hover .movie-card {
+    transform: translateY(-6px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-card-hover), 0 0 30px var(--primary-glow);
+}
+
+/* Poster wrapper: contains the image and rating badge */
+.poster-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3; /* Standard movie poster ratio */
+    overflow: hidden;
+    background: var(--bg-card-hover);
+}
+
+/* Poster image: fills the wrapper, zooms slightly on card hover */
+/* If the image fails to load, the bg-card-hover background shows through */
+.poster-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+}
+
+/* Fallback: if image is broken, show a styled placeholder */
+.poster-img[alt]::after {
+    content: attr(alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+    background: var(--bg-card-hover);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-align: center;
+    padding: var(--space-md);
+}
+
+.movie-card:hover .poster-img,
+.movie-card-link:hover .poster-img {
+    transform: scale(1.05);
+}
+
+/* Rating badge: small overlay in top-right corner of poster */
+.rating-badge {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    background: var(--peach);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #2D2D2D;
+}
+
+/* Card info section: below the poster */
+.card-info {
+    padding: var(--space-md) var(--space-md) var(--space-lg);
+}
+
+.movie-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    /* Truncate long titles with ellipsis */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movie-genre {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+/* Card footer: price on left, book button on right */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.movie-price {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+
+/* =============================================
+   6. BUTTONS
+   ============================================= */
+
+/* Base button style */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-sm) var(--space-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition-smooth),
+                color var(--transition-smooth),
+                box-shadow var(--transition-smooth),
+                transform var(--transition-smooth),
+                border-color var(--transition-smooth);
+}
+
+/* "Book Now" button on movie cards */
+.btn-book {
+    background: var(--primary);
+    color: #FFFFFF;
+    padding: var(--space-sm) var(--space-md);
+}
+
+.btn-book:hover {
+    background: var(--primary-hover);
+    box-shadow: var(--shadow-btn);
+    transform: translateY(-2px);
+}
+
+.btn-book:active {
+    transform: translateY(0px) scale(0.97);
+    box-shadow: none;
+}
+
+/* Primary button (used for main CTAs across pages) */
+.btn-primary {
+    background: var(--primary);
+    color: #FFFFFF;
+    padding: var(--space-sm) var(--space-lg);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    box-shadow: var(--shadow-btn);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0px) scale(0.97);
+    box-shadow: none;
+}
+
+
+/* =============================================
+   7. FOOTER
+   ============================================= */
+
+.footer {
+    text-align: center;
+    padding: var(--space-lg) var(--space-xl);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+
+/* =============================================
+   8. FUTURE SECTIONS (placeholders)
+   ============================================= */
+
+/* =============================================
+   8. MOVIE DETAILS PAGE
+   ============================================= */
+
+/* Navbar brand link — removes default link styling inside navbar */
+.brand-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+/* Reusable label style (used for Language, Price, etc.) */
+.label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/*
+ * Movie Detail Page — Full-page backdrop
+ * The backdrop image covers the entire page.
+ * A dark overlay ensures text readability.
+ */
+.detail-body {
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.detail-body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    z-index: 0;
+}
+
+.detail-body > * {
+    position: relative;
+    z-index: 1;
+}
+
+/*
+ * Movie Backdrop Banner (poster + info area)
+ */
+.movie-backdrop {
+    position: relative;
+    width: 100%;
+    min-height: 420px;
+    margin-top: 54px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.backdrop-gradient {
+    display: none;
+}
+
+/* Content container inside the banner */
+.backdrop-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px var(--space-xl) 48px;
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+}
+
+/* Poster inside the banner */
+.backdrop-poster {
+    flex-shrink: 0;
+    width: 260px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.backdrop-poster-img {
+    width: 100%;
+    display: block;
+}
+
+/* Info column beside the poster */
+.backdrop-info {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 8px;
+}
+
+.backdrop-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+/* Back button (sits left of poster, scrolls with page) */
+.back-btn {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+
+.back-btn:hover {
+    background: rgba(0, 0, 0, 0.75);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Rating box */
+.backdrop-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 10px 18px;
+    width: fit-content;
+}
+
+.rating-star {
+    font-size: 1.2rem;
+}
+
+.rating-score {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* Meta line: duration · genres · year */
+.backdrop-meta {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.2px;
+}
+
+/* Language tags */
+.backdrop-tags {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.lang-tag {
+    display: inline-block;
+    padding: 4px 14px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Ticket price inside banner */
+.backdrop-price {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 10px 18px;
+    width: fit-content;
+    margin-top: 4px;
+}
+
+.backdrop-price .price-label {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.backdrop-price .price-eth {
+    color: var(--primary);
+}
+
+/* Seats/checkout/confirm pages — clear the fixed navbar */
+.detail-page {
+    padding-top: 70px;
+}
+
+/* Content area below the backdrop */
+.detail-page-content {
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-2xl);
+}
+
+/* About the movie section */
+.about-section {
+    margin-bottom: var(--space-xl);
+}
+
+.about-heading {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: var(--space-md);
+}
+
+.about-text {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.8;
+    max-width: 800px;
+}
+
+/* Price section */
+.price-section {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+    padding: var(--space-md) var(--space-lg);
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-md);
+    width: fit-content;
+}
+
+.price-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+/* Detail page overrides for dark background */
+.detail-body .showtime-section {
+    background: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-body .section-title {
+    color: #fff;
+}
+
+.detail-body .section-title::before {
+    background: var(--primary);
+}
+
+.detail-body .selector-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.detail-body .date-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.detail-body .date-pill.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.detail-body .time-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.detail-body .time-pill.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.detail-body .footer {
+    background: rgba(0, 0, 0, 0.3);
+    border-top-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- Dark backdrop overrides for seats/checkout/confirm pages --- */
+
+.detail-body .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 10px 18px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.detail-body .back-link:hover {
+    background: rgba(0, 0, 0, 0.75);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #fff;
+}
+
+.detail-body .step-number {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.detail-body .step-label {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.detail-body .step.active .step-label {
+    color: var(--primary);
+}
+
+.detail-body .step.completed .step-label {
+    color: var(--success);
+}
+
+.detail-body .step-line {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.detail-body .booking-context {
+    background: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: var(--space-md) var(--space-lg);
+}
+
+.detail-body .context-separator {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.detail-body .context-movie {
+    color: #fff;
+    font-weight: 700;
+}
+
+.detail-body .context-date,
+.detail-body .context-time {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.detail-body .cinema-container {
+    background: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-body .screen-text {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.detail-body .screen-bar {
+    background: linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.05));
+}
+
+.detail-body .seat.available {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.detail-body .seat.booked {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.detail-body .row-label {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.detail-body .legend-item {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.detail-body .seat-demo.available {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.detail-body .seat-demo.booked {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.detail-body .booking-summary {
+    background: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-body .summary-label {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.detail-body .summary-value {
+    color: #fff;
+}
+
+/* --- Checkout page dark overrides --- */
+
+.detail-body .order-card {
+    background: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-body .order-card-title {
+    color: #fff;
+}
+
+.detail-body .order-movie-title {
+    color: #fff;
+}
+
+.detail-body .order-movie-genre {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.detail-body .order-label {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.detail-body .order-value {
+    color: #fff;
+}
+
+.detail-body .order-divider {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.detail-body .order-total-label {
+    color: #fff;
+}
+
+.detail-body .wallet-card {
+    background: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-body .wallet-card-title {
+    color: #fff;
+}
+
+.detail-body .wallet-message {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.detail-body .wallet-hint {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.detail-body .wallet-info-label {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.detail-body .wallet-info-value {
+    color: #fff;
+}
+
+.detail-body .disclaimer {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.detail-body .tx-progress {
+    background: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-body .tx-progress-title {
+    color: #fff;
+}
+
+.detail-body .tx-step-label {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.detail-body .tx-step-sub {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- Ticket/confirmation page dark overrides --- */
+
+.detail-body .confirm-title {
+    color: #fff;
+}
+
+.detail-body .confirm-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.detail-body .confirm-icon {
+    background: var(--success);
+    color: #fff;
+}
+
+.detail-body .ticket-card {
+    background: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-body .ticket-movie-title {
+    color: #fff;
+}
+
+.detail-body .ticket-movie-sub {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.detail-body .ticket-tear {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.detail-body .ticket-label {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.detail-body .ticket-value {
+    color: #fff;
+}
+
+.detail-body .ticket-footer {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.price-eth {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* (Old detail-description / detail-price removed — replaced by backdrop layout) */
+
+
+/* =============================================
+   9. SHOWTIME SELECTION
+   ============================================= */
+
+/*
+ * Showtime section: contains date pills and time slots.
+ * Sits below the movie hero section.
+ */
+.showtime-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+/* "Choose Date" / "Choose Time" label */
+.selector-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+/* Date selector row */
+.date-selector {
+    margin-bottom: var(--space-lg);
+}
+
+/* Horizontal scrollable row of date pills */
+.date-pills {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    padding-bottom: var(--space-xs);
+}
+
+/*
+ * Each date pill: a vertical button showing
+ * day name (Mon), date number (10), month (Mar).
+ */
+.date-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 72px;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-input);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    font-family: var(--font-family);
+    color: var(--text-secondary);
+}
+
+.date-pill:hover {
+    border-color: var(--primary);
+    color: var(--text-primary);
+}
+
+/* Active (selected) date pill */
+.date-pill.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #FFFFFF;
+    box-shadow: 0 0 16px var(--primary-glow);
+}
+
+.pill-day {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pill-date {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.pill-month {
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+/* Time slot row */
+.time-selector {
+    margin-bottom: var(--space-sm);
+}
+
+/* Horizontal scrollable row of time pills */
+.time-pills {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    padding-bottom: var(--space-xs);
+}
+
+/* Each time pill: a horizontal button */
+.time-pill {
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--bg-input);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-smooth);
+}
+
+.time-pill:hover {
+    border-color: var(--primary);
+    color: var(--text-primary);
+}
+
+/* Active (selected) time pill */
+.time-pill.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #FFFFFF;
+    box-shadow: 0 0 16px var(--primary-glow);
+}
+
+/* Disabled (past) time pill */
+.time-pill.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+    text-decoration: line-through;
+}
+
+
+/* =============================================
+   10. LARGE CTA BUTTON
+   ============================================= */
+
+/* CTA wrapper: centers the "Select Seats" button */
+.detail-cta {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-md) 0 var(--space-xl);
+}
+
+/* Large button variant for main page CTAs */
+.btn-lg {
+    padding: var(--space-md) var(--space-xl);
+    font-size: 1rem;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.3px;
+}
+
+
+/* =============================================
+   11. PROGRESS STEPS
+   ============================================= */
+
+/*
+ * Horizontal step indicator: 1 → 2 → 3 → 4
+ * Each step has a number circle and a label.
+ * Steps are connected by lines.
+ * States: default (grey), active (purple), completed (green check).
+ */
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: var(--space-xl);
+}
+
+/* Individual step: number + label stacked vertically */
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+/* Step number circle */
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: var(--bg-input);
+    border: 2px solid var(--border-light);
+    color: var(--text-muted);
+    transition: all var(--transition-fast);
+}
+
+/* Step label text */
+.step-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Active step: coral highlight */
+.step.active .step-number {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #FFFFFF;
+    box-shadow: 0 0 16px var(--primary-glow);
+}
+
+.step.active .step-label {
+    color: var(--primary);
+}
+
+/* Completed step: teal with checkmark */
+.step.completed .step-number {
+    background: var(--success);
+    border-color: var(--success);
+    color: #FFFFFF;
+}
+
+.step.completed .step-label {
+    color: var(--success);
+}
+
+/* Connecting line between steps */
+.step-line {
+    width: 48px;
+    height: 2px;
+    background: var(--border-light);
+    margin: 0 var(--space-sm);
+    margin-bottom: 18px; /* Align with the circles, not labels */
+}
+
+/* Completed line: green */
+.step-line.completed {
+    background: var(--success);
+}
+
+
+/* =============================================
+   12. BOOKING CONTEXT BAR
+   ============================================= */
+
+/* Shows which movie/date/time was selected — reminder strip */
+.booking-context {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-lg);
+    font-size: 0.85rem;
+}
+
+.context-movie {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.context-separator {
+    color: var(--text-muted);
+}
+
+.context-date,
+.context-time {
+    color: var(--text-secondary);
+}
+
+
+/* =============================================
+   13. CINEMA SEAT MAP
+   ============================================= */
+
+/* Container for the entire cinema area */
+.cinema-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+/* --- Screen Indicator --- */
+.screen-wrapper {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+/* The glowing "screen" bar at the top */
+.screen-bar {
+    width: 60%;
+    height: 4px;
+    margin: 0 auto var(--space-sm);
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    border-radius: 2px;
+    box-shadow: 0 0 20px var(--primary-glow), 0 4px 30px var(--primary-glow);
+}
+
+.screen-text {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+/* --- Seat Grid --- */
+.seat-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+/* A single row: label + seats + label */
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+/* Row label (A, B, C...) on each side */
+.row-label {
+    width: 20px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Container for the seat buttons within a row */
+.seats-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Aisle gap between seat sections */
+.aisle-gap {
+    width: 20px;
+}
+
+/* --- Individual Seat Button --- */
+.seat {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: var(--font-family);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Available seat: dark, clickable */
+.seat.available {
+    background: var(--seat-available);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+}
+
+.seat.available:hover {
+    background: rgba(239, 69, 102, 0.2);
+    border-color: var(--primary);
+    color: var(--text-primary);
+    transform: scale(1.1);
+}
+
+/* Selected seat: coral, glowing */
+.seat.selected {
+    background: var(--seat-selected);
+    color: #FFFFFF;
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 12px var(--primary-glow);
+    transform: scale(1.05);
+}
+
+/* Booked seat: greyed out, not clickable */
+.seat.booked {
+    background: var(--seat-booked);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+
+/* --- Seat Legend --- */
+.seat-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-lg);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Small demo seat squares in the legend */
+.seat-demo {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.seat-demo.available {
+    background: var(--seat-available);
+    border: 1px solid var(--border-light);
+}
+
+.seat-demo.selected {
+    background: var(--seat-selected);
+}
+
+.seat-demo.booked {
+    background: var(--seat-booked);
+    opacity: 0.4;
+}
+
+
+/* =============================================
+   14. BOOKING SUMMARY BAR
+   ============================================= */
+
+/*
+ * Sticky bar at the bottom of the seat selection page.
+ * Shows selected seats, count, total ETH, and checkout button.
+ */
+.booking-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+}
+
+/* Left side: seat info */
+.summary-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.summary-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.85rem;
+}
+
+.summary-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.summary-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.summary-total {
+    color: var(--primary);
+    font-size: 0.95rem;
+}
+
+.summary-divider {
+    color: var(--border-light);
+    margin: 0 var(--space-xs);
+}
+
+
+/* =============================================
+   15. CHECKOUT PAGE
+   ============================================= */
+
+/*
+ * Two-column layout: order summary on left, wallet + pay on right.
+ * Stacks vertically on tablet/mobile (see responsive.css).
+ */
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    align-items: start;
+}
+
+/* --- Order Summary Card --- */
+.order-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+}
+
+.order-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-lg);
+    color: var(--text-primary);
+}
+
+/* Movie info: poster thumbnail + title/genre */
+.order-movie-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.order-poster {
+    width: 64px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.order-movie-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+}
+
+.order-movie-genre {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Divider line between sections */
+.order-divider {
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-md) 0;
+}
+
+/* Details list: label on left, value on right */
+.order-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.order-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.order-value {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Total row: larger, highlighted */
+.order-total-row {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px dashed var(--border-light);
+}
+
+.order-total-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.order-total-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+
+/* --- Right Column: Wallet + Pay Actions --- */
+.checkout-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+/* Wallet Status Card */
+.wallet-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+}
+
+.wallet-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+    color: var(--text-primary);
+}
+
+/* Wallet state containers */
+.wallet-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    text-align: center;
+}
+
+/* Wallet icon circle (not connected state) */
+.wallet-icon-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    border: 2px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wallet-icon {
+    font-size: 1.4rem;
+}
+
+.wallet-message {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 280px;
+}
+
+/* Connected state: info rows */
+.wallet-connected {
+    align-items: stretch;
+}
+
+.wallet-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.wallet-info-row:last-child {
+    border-bottom: none;
+}
+
+.wallet-info-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.wallet-info-value {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+/* Connected status badge with green dot */
+.wallet-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+}
+
+.wallet-status-badge.connected {
+    color: var(--success);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    /* Pulsing animation */
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+
+/* --- Pay Button --- */
+.btn-pay {
+    width: 100%;
+    padding: var(--space-md) var(--space-lg);
+    background: linear-gradient(135deg, var(--primary), #F69A9A);
+    color: #FFFFFF;
+    border: none;
+    /* Override base btn transition for pay-specific properties */
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: box-shadow var(--transition-smooth),
+                transform var(--transition-smooth),
+                background var(--transition-smooth),
+                opacity var(--transition-smooth);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+}
+
+.btn-pay:hover:not(:disabled) {
+    box-shadow: var(--shadow-btn), 0 0 30px var(--primary-glow);
+    transform: translateY(-2px);
+}
+
+.btn-pay:active:not(:disabled) {
+    transform: translateY(0px) scale(0.98);
+    box-shadow: var(--shadow-btn);
+}
+
+.btn-pay:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pay-btn-icon {
+    font-size: 1.1rem;
+}
+
+
+/* --- Disclaimer --- */
+.disclaimer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: var(--space-sm);
+    background: rgba(249, 192, 165, 0.05);
+    border: 1px solid rgba(249, 192, 165, 0.1);
+    border-radius: var(--radius-sm);
+}
+
+.disclaimer-icon {
+    font-size: 0.9rem;
+    color: var(--warning);
+}
+
+
+/* =============================================
+   16. PAYMENT BUTTON STATES
+   ============================================= */
+
+/* Spinner: a small rotating circle inside the Pay button */
+.spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #FFFFFF;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Pay button while transaction is processing */
+.btn-pay.btn-processing {
+    background: var(--bg-input);
+    cursor: wait;
+    opacity: 0.8;
+}
+
+/* Pay button after successful payment */
+.btn-pay.btn-success {
+    background: var(--success);
+    cursor: default;
+}
+
+/* Larger spinner variant (used in wallet connecting state) */
+.spinner-lg {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+}
+
+
+/* =============================================
+   16b. WALLET CONNECTION LOADING STATE
+   ============================================= */
+
+/* Connecting state icon circle: pulsing border */
+.wallet-icon-connecting {
+    border-color: var(--primary);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Hint text below the connecting message */
+.wallet-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Connect button while loading */
+.btn-primary.btn-connecting {
+    opacity: 0.7;
+    cursor: wait;
+    pointer-events: none;
+}
+
+
+/* =============================================
+   16c. TRANSACTION PROGRESS INDICATOR
+   ============================================= */
+
+/* Fade-in animation for progress panel */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Progress panel container (hidden by default) */
+.tx-progress {
+    display: none;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    animation: fadeIn 0.3s ease;
+}
+
+.tx-progress.active {
+    display: flex;
+}
+
+.tx-progress-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+/* Step list */
+.tx-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+/* Individual step row */
+.tx-step {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    transition: all var(--transition-smooth);
+}
+
+.tx-step.active {
+    color: var(--text-primary);
+    background: rgba(239, 69, 102, 0.08);
+    border: 1px solid rgba(239, 69, 102, 0.2);
+}
+
+.tx-step.completed {
+    color: var(--success);
+}
+
+/* Step number circle */
+.tx-step-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+.tx-step.pending .tx-step-icon {
+    background: var(--bg-input);
+    border: 2px solid var(--border-light);
+    color: var(--text-muted);
+}
+
+.tx-step.active .tx-step-icon {
+    background: var(--primary);
+    border: 2px solid var(--primary);
+    color: #FFFFFF;
+    box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.tx-step.completed .tx-step-icon {
+    background: var(--success);
+    border: 2px solid var(--success);
+    color: #FFFFFF;
+}
+
+.tx-step-label {
+    font-weight: 500;
+}
+
+.tx-step-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.tx-step.active .tx-step-sub {
+    color: var(--text-secondary);
+}
+
+/* Animated sliding bar during blockchain mining */
+.tx-mining-bar {
+    width: 100%;
+    height: 3px;
+    background: var(--bg-input);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: var(--space-xs);
+}
+
+.tx-mining-bar-fill {
+    height: 100%;
+    width: 30%;
+    background: linear-gradient(90deg, var(--primary), #F69A9A);
+    border-radius: 2px;
+    animation: miningSlide 1.5s ease-in-out infinite;
+}
+
+@keyframes miningSlide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+}
+
+
+/* =============================================
+   17. CONFIRMATION / TICKET PAGE
+   ============================================= */
+
+/* Confirmation page uses detail-page for top margin (already defined) */
+
+/* Success header: big checkmark + message */
+.confirm-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+/* Green checkmark circle */
+.confirm-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-md);
+    font-size: 2rem;
+    color: #FFFFFF;
+    box-shadow: 0 0 30px rgba(131, 174, 155, 0.3);
+    /* Pop-in animation */
+    animation: popIn 0.5s ease-out;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.confirm-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+}
+
+.confirm-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Slide-up entrance animation for ticket card */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ticket card: styled like a premium digital ticket */
+.ticket-card {
+    max-width: 520px;
+    margin: 0 auto var(--space-xl);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1),
+                0 0 60px rgba(239, 69, 102, 0.08);
+    animation: slideUp 0.6s ease-out;
+}
+
+/* Gradient accent strip at top of ticket */
+.ticket-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--peach), var(--primary));
+    z-index: 1;
+}
+
+/* Top section: movie poster + info */
+.ticket-top {
+    display: flex;
+    gap: var(--space-lg);
+    padding: var(--space-xl) var(--space-lg) var(--space-lg);
+    background: linear-gradient(180deg, rgba(239, 69, 102, 0.06) 0%, transparent 100%);
+}
+
+.ticket-poster {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.ticket-movie-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    justify-content: center;
+}
+
+.ticket-movie-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.ticket-movie-sub {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Dashed tear line between top and bottom sections */
+.ticket-tear {
+    height: var(--space-lg);
+    margin: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.ticket-tear::before {
+    content: '';
+    position: absolute;
+    left: var(--space-lg);
+    right: var(--space-lg);
+    height: 2px;
+    border-top: 2px dashed var(--border-light);
+}
+
+/* Bottom section: booking details */
+.ticket-bottom {
+    padding: var(--space-lg) var(--space-lg) var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.ticket-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.ticket-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.ticket-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ticket-value {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Transaction hash: monospace font + clickable link */
+.ticket-value.tx-hash {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: var(--primary);
+    text-decoration: none;
+    transition: color var(--transition-smooth);
+}
+
+.ticket-value.tx-hash:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Amount paid: highlighted */
+.ticket-value.amount {
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+/* Wallet address: monospace font for hex addresses */
+.ticket-value.wallet-address {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    cursor: default;
+}
+
+/* Ticket footer: branded strip at the bottom of the ticket card */
+.ticket-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    background: linear-gradient(135deg, rgba(239, 69, 102, 0.1), rgba(131, 174, 155, 0.05));
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.ticket-footer-icon {
+    font-size: 0.85rem;
+}
+
+/* Back to Home button wrapper */
+.confirm-cta {
+    display: flex;
+    justify-content: center;
+    padding-bottom: var(--space-xl);
+}
+
+
+/* =============================================
+   18. HOMEPAGE — HERO, CAROUSEL, SECTIONS
+   ============================================= */
+
+/* --- Movie Section Container --- */
+.movie-listing {
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 16px;
+    padding: var(--space-lg) var(--space-xl);
+    margin-bottom: var(--space-xl);
+}
+
+/* --- Section Header (title + arrows) --- */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+}
+
+.section-header .section-title {
+    margin-bottom: 0;
+}
+
+/* --- Carousel System --- */
+.carousel-nav {
+    display: none;
+}
+
+.carousel-viewport {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-bottom: var(--space-2xl);
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 38%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(30, 30, 30, 0.7);
+    color: #FFFFFF;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-smooth);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.carousel-arrow-left {
+    left: 4px;
+}
+
+.carousel-arrow-right {
+    right: 4px;
+}
+
+.carousel-arrow:hover {
+    background: rgba(30, 30, 30, 0.9);
+    transform: translateY(-50%) scale(1.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.carousel-arrow:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.carousel-arrow.disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.carousel-track {
+    display: flex;
+    gap: var(--space-lg);
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    will-change: transform;
+}
+
+.carousel-slide {
+    flex: 0 0 calc((100% - 3 * var(--space-lg)) / 4);
+    min-width: 0;
+}
+
+.carousel-slide .movie-card-link {
+    display: block;
+    height: 100%;
+}
+
+.carousel-slide .movie-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-slide .card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-slide .card-footer {
+    margin-top: auto;
+}
+
+/* --- Coming Soon card variants --- */
+.coming-soon-badge {
+    background: var(--teal) !important;
+    color: #FFFFFF !important;
+    font-size: 0.7rem;
+}
+
+.btn-notify {
+    background: var(--teal);
+}
+
+.btn-notify:hover {
+    background: var(--accent);
+    box-shadow: 0 4px 16px rgba(131, 174, 155, 0.3);
+}
+
+/* --- Network badge --- */
+.nav-network-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #888;
+    letter-spacing: 0.2px;
+}

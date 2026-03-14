@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Ticket - Tixxer</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="detail-body" id="ticketBody">
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="../index.html" class="brand-link">
+                <img src="../assets/images/logo.svg" alt="Tixxer" class="logo-img">
+            </a>
+        </div>
+        <div class="navbar-center">
+            <a href="../index.html" class="nav-brand-text" style="text-decoration:none;">Tixxer</a>
+        </div>
+        <div class="navbar-right">
+            <span class="nav-network-badge">Powered by Sepolia Testnet</span>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="container detail-page">
+
+        <!-- Progress Steps: all completed -->
+        <div class="progress-steps">
+            <div class="step completed">
+                <span class="step-number">1</span>
+                <span class="step-label">Movie</span>
+            </div>
+            <div class="step-line completed"></div>
+            <div class="step completed">
+                <span class="step-number">2</span>
+                <span class="step-label">Seats</span>
+            </div>
+            <div class="step-line completed"></div>
+            <div class="step completed">
+                <span class="step-number">3</span>
+                <span class="step-label">Checkout</span>
+            </div>
+            <div class="step-line completed"></div>
+            <div class="step active">
+                <span class="step-number">4</span>
+                <span class="step-label">Ticket</span>
+            </div>
+        </div>
+
+        <!-- ====== SUCCESS HEADER ====== -->
+        <div class="confirm-header">
+            <div class="confirm-icon">&#10003;</div>
+            <h1 class="confirm-title">Booking Successful!</h1>
+            <p class="confirm-subtitle">
+                Your ticket has been confirmed and the payment is verified on the blockchain.
+            </p>
+        </div>
+
+        <!-- ====== DIGITAL TICKET CARD ====== -->
+        <div class="ticket-card" id="ticketCard">
+
+            <div class="ticket-top">
+                <img
+                    id="ticketPoster"
+                    src=""
+                    alt="Movie poster"
+                    class="ticket-poster"
+                >
+                <div class="ticket-movie-info">
+                    <h2 class="ticket-movie-title" id="ticketMovieTitle">Loading...</h2>
+                    <p class="ticket-movie-sub" id="ticketGenre"></p>
+                    <p class="ticket-movie-sub" id="ticketShowtime"></p>
+                    <p class="ticket-movie-sub" id="ticketSeatsTop"></p>
+                </div>
+            </div>
+
+            <!-- Dashed tear line -->
+            <div class="ticket-tear"></div>
+
+            <div class="ticket-bottom">
+                <div class="ticket-row">
+                    <span class="ticket-label">Booking ID</span>
+                    <span class="ticket-value" id="bookingId">TXR-00000000-0000</span>
+                </div>
+                <div class="ticket-row">
+                    <span class="ticket-label">Date & Time</span>
+                    <span class="ticket-value" id="ticketDateTime"></span>
+                </div>
+                <div class="ticket-row">
+                    <span class="ticket-label">Seats</span>
+                    <span class="ticket-value" id="ticketSeats"></span>
+                </div>
+                <div class="ticket-row">
+                    <span class="ticket-label">Wallet</span>
+                    <span class="ticket-value wallet-address" id="ticketWallet">0x0000...0000</span>
+                </div>
+                <div class="ticket-row">
+                    <span class="ticket-label">Amount Paid</span>
+                    <span class="ticket-value amount" id="amountPaid">0.000 ETH</span>
+                </div>
+                <div class="ticket-row">
+                    <span class="ticket-label">Tx Hash</span>
+                    <a class="ticket-value tx-hash" id="txHashLink" href="#" target="_blank" rel="noopener noreferrer">
+                        Loading...
+                    </a>
+                </div>
+            </div>
+
+            <div class="ticket-footer">
+                <span class="ticket-footer-icon">&#127916;</span>
+                <span>Tixxer &middot; Web3 Movie Tickets</span>
+            </div>
+        </div>
+
+        <!-- ====== BACK TO HOME ====== -->
+        <div class="confirm-cta">
+            <a href="../index.html" class="btn btn-primary btn-lg">
+                Back to Home
+            </a>
+        </div>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <p>&copy; 2026 Tixxer &middot; Built for Learning</p>
+    </footer>
+
+    <!-- Movie data -->
+    <script src="../js/movies.js"></script>
+
+    <!-- Set backdrop from movie data -->
+    <script>
+    (function () {
+        // Try to get movie ID from URL param or sessionStorage
+        var params = new URLSearchParams(window.location.search);
+        var id = parseInt(params.get('id')) ||
+                 parseInt(sessionStorage.getItem('tixxer_movieId')) || 1;
+        var movie = getMovie(id);
+
+        if (movie) {
+            var bgUrl = movie.backdrop || movie.poster;
+            document.getElementById('ticketBody').style.backgroundImage = 'url(' + bgUrl + ')';
+            document.title = 'Your Ticket - ' + movie.title + ' - Tixxer';
+
+            // Set poster and genre (sessionStorage may not have these)
+            document.getElementById('ticketPoster').src = movie.poster;
+            document.getElementById('ticketPoster').alt = movie.title + ' poster';
+            document.getElementById('ticketGenre').textContent = movie.genre;
+        }
+    })();
+    </script>
+
+    <!-- Ticket logic -->
+    <script src="../js/ticket.js"></script>
+
+</body>
+</html>
